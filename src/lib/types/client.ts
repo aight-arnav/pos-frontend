@@ -1,9 +1,8 @@
-export interface Client {
+import { AuditedData } from "@/lib/types/AuditedData";
+
+export interface ClientData extends AuditedData {
   id: number;
   clientName: string;
-  createdAt: string;
-  updatedAt: string;
-  version: number;
 }
 
 export interface ClientForm {
