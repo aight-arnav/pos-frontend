@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Client, ClientForm } from "@/lib/types/client";
-import { ClientApi } from "@/lib/api/clientApi";
+import { ClientData, ClientForm } from "@/lib/types/Client";
+import { ClientApi } from "@/lib/api/ClientApi";
 
 export function useClients() {
-  const [clients, setClients] = useState<Client[]>([]);
+  const [clients, setClients] = useState<ClientData[]>([]);
   const [loading, setLoading] = useState(true);
 
   const addClient = async (form: ClientForm) => {

@@ -8,21 +8,39 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Client, ClientForm } from "@/lib/types/client";
+import { ClientData, ClientForm } from "@/lib/types/Client";
 
 interface Props {
   triggerLabel: string;
-  initialData?: Client;
+  initialData?: ClientData;
   onSubmit: (form: ClientForm) => Promise<void>;
 }
 
-export function ClientFormDialog({ triggerLabel, initialData, onSubmit }: Props) {
+export function ClientFormDialog({
+  triggerLabel,
+  initialData,
+  onSubmit,
+}: Props) {
+  const [open, setOpen] = useState(false);
   const [clientName, setClientName] = useState(
     initialData?.clientName ?? ""
   );
 
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+
+    if (nextOpen) {
+      setClientName(initialData?.clientName ?? "");
+    }
+  }
+
+  async function handleSave() {
+    await onSubmit({ clientName });
+    setOpen(false);
+  }
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button>{triggerLabel}</Button>
       </DialogTrigger>
@@ -43,7 +61,8 @@ export function ClientFormDialog({ triggerLabel, initialData, onSubmit }: Props)
 
           <Button
             className="w-full"
-            onClick={() => onSubmit({ clientName })}
+            onClick={handleSave}
+            disabled={!clientName.trim()}
           >
             Save
           </Button>

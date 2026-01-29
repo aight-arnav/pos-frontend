@@ -1,12 +1,12 @@
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Client } from "@/lib/types/client";
+import { ClientData, ClientForm } from "@/lib/types/Client";
 import { ClientFormDialog } from "./ClientFormDialog";
 import clsx from "clsx";
 
 interface Props {
-  client: Client;
+  client: ClientData;
   index: number;
-  onUpdate: (id: number, form: { clientName: string }) => Promise<void>;
+  onUpdate: (id: number, form: ClientForm) => Promise<void>;
 }
 
 export function ClientRow({ client, index, onUpdate }: Props) {
@@ -23,11 +23,15 @@ export function ClientRow({ client, index, onUpdate }: Props) {
       </TableCell>
 
       <TableCell className="text-muted-foreground">
-        {new Date(client.createdAt).toLocaleString()}
+        {client.createdAt
+          ? new Date(client.createdAt).toLocaleString()
+          : "—"}
       </TableCell>
 
       <TableCell className="text-muted-foreground">
-        {new Date(client.updatedAt).toLocaleString()}
+        {client.updatedAt
+          ? new Date(client.updatedAt).toLocaleString()
+          : "—"}
       </TableCell>
 
       <TableCell className="text-right">

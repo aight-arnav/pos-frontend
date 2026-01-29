@@ -5,12 +5,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Client } from "@/lib/types/client";
+import { ClientData, ClientForm } from "@/lib/types/Client";
 import { ClientRow } from "./ClientRow";
 
 interface Props {
-  clients: Client[];
-  onUpdate: (id: number, form: { clientName: string }) => Promise<void>;
+  clients: ClientData[];
+  onUpdate: (id: number, form: ClientForm) => Promise<void>;
 }
 
 export function ClientTable({ clients, onUpdate }: Props) {

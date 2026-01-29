@@ -22,7 +22,10 @@ export default function ClientsPage() {
         />
       </div>
 
-      <ClientTable clients={clients} onUpdate={updateClient} />
+      <ClientTable
+        clients={clients}
+        onUpdate={updateClient}
+      />
     </div>
   );
 }
