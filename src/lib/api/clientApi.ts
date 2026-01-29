@@ -1,19 +1,24 @@
-import ApiClient from "@/lib/api/ApiClient";
-import { Client, ClientForm } from "@/lib/types/client";
+import { ClientData, ClientForm } from "@/lib/types/Client";
+import { ApiClient } from "./ApiClient";
 
 export const ClientApi = {
-  getAll: async (): Promise<Client[]> => {
-    const res = await ApiClient.get("/clients");
+  getAll: async (page: number = 0, size: number = 10) => {
+    const res = await ApiClient.get<ClientData[]>("/clients", { params: { page, size } });
+    return res.data;
+  },  
+
+  getByName: async (name: string) => {
+    const res = await ApiClient.get<ClientData>("/clients", { params: { name } });
     return res.data;
   },
 
-  add: async (data: ClientForm): Promise<Client> => {
-    const res = await ApiClient.post("/clients", data);
+  add: async (form: ClientForm) => {
+    const res = await ApiClient.post<ClientData>("/clients", form);
     return res.data;
   },
 
-  update: async (id: number, data: ClientForm): Promise<Client> => {
-    const res = await ApiClient.put(`/clients/${id}`, data);
+  update: async (id: number, form: ClientForm) => {
+    const res = await ApiClient.put<ClientData>(`/clients/${id}`, form);
     return res.data;
-  },
+  }
 };
