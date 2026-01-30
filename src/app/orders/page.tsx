@@ -4,7 +4,7 @@ import { OrderTable } from "@/components/orders/OrderTable";
 import { useOrders } from "@/hooks/useOrders";
 
 export default function OrdersPage() {
-  const { orders, loading } = useOrders();
+  const { orders, ordersLoading } = useOrders();
 
   return (
     <div className="p-6 space-y-6">
@@ -14,7 +14,7 @@ export default function OrdersPage() {
 
       <OrderTable
         orders={orders}
-        loading={loading}
+        loading={ordersLoading}
       />
     </div>
   );

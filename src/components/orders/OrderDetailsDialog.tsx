@@ -17,9 +17,8 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table";
-import { OrderApi } from "@/lib/api/OrderApi";
-import { OrderData } from "@/lib/types/Order";
 import { formatIST } from "@/lib/utils/date";
+import { useOrders } from "@/hooks/useOrders";
 
 interface Props {
   orderId: number;
@@ -27,45 +26,43 @@ interface Props {
 
 export function OrderDetailsDialog({ orderId }: Props) {
   const [open, setOpen] = useState(false);
-  const [order, setOrder] = useState<OrderData | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  const {
+    selectedOrder: order,
+    selectedOrderLoading: loading,
+    invoiceLoading,
+    fetchOrderById,
+    generateInvoice,
+  } = useOrders();
 
   useEffect(() => {
     if (!open) return;
-
-    async function load() {
-      setLoading(true);
-      try {
-        const data = await OrderApi.getById(orderId);
-        setOrder(data);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, [open, orderId]);
+    fetchOrderById(orderId);
+  }, [open, orderId, fetchOrderById]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          View
-        </Button>
+        <Button variant="outline" size="sm">View</Button>
       </DialogTrigger>
 
       <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>
-            Order #{orderId}
-          </DialogTitle>
+          <DialogTitle>Order #{orderId}</DialogTitle>
         </DialogHeader>
 
         {loading && (
-          <div className="text-sm text-muted-foreground">
-            Loading order…
-          </div>
+          <div className="text-sm text-muted-foreground">Loading order…</div>
         )}
+
+        <div className="flex justify-end">
+          <Button
+            onClick={() => generateInvoice(orderId)}
+            disabled={invoiceLoading}
+          >
+            {invoiceLoading ? "Generating..." : "Generate Invoice"}
+          </Button>
+        </div>
 
         {order && (
           <div className="space-y-4">
@@ -78,25 +75,16 @@ export function OrderDetailsDialog({ orderId }: Props) {
                 <TableHeader className="bg-muted">
                   <TableRow>
                     <TableHead>Product</TableHead>
-                    <TableHead className="text-right">
-                      Quantity
-                    </TableHead>
-                    <TableHead className="text-right">
-                      Selling Price
-                    </TableHead>
+                    <TableHead className="text-right">Quantity</TableHead>
+                    <TableHead className="text-right">Selling Price</TableHead>
                   </TableRow>
                 </TableHeader>
-
                 <TableBody>
                   {order.orderItems.map((item, idx) => (
                     <TableRow key={idx}>
                       <TableCell>{item.productName}</TableCell>
-                      <TableCell className="text-right">
-                        {item.quantity}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {item.sellingPrice}
-                      </TableCell>
+                      <TableCell className="text-right">{item.quantity}</TableCell>
+                      <TableCell className="text-right">{item.sellingPrice}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

@@ -6,25 +6,70 @@ import { OrderData } from "@/lib/types/Order";
 
 export function useOrders(page = 0, size = 10) {
   const [orders, setOrders] = useState<OrderData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [ordersLoading, setOrdersLoading] = useState(true);
 
+  const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
+  const [selectedOrderLoading, setSelectedOrderLoading] = useState(false);
+
+  const [invoiceLoading, setInvoiceLoading] = useState(false);
+
+  // Load all orders
   useEffect(() => {
     let alive = true;
 
-    async function load() {
-      setLoading(true);
-      const data = await OrderApi.getAll(page, size);
-      if (alive) {
-        setOrders(data);
-        setLoading(false);
+    async function loadOrders() {
+      setOrdersLoading(true);
+      try {
+        const data = await OrderApi.getAll(page, size);
+        if (alive) setOrders(data);
+      } finally {
+        if (alive) setOrdersLoading(false);
       }
     }
 
-    load();
+    loadOrders();
     return () => {
       alive = false;
     };
   }, [page, size]);
 
-  return { orders, loading };
+  // Fetch a single order by ID
+  async function fetchOrderById(orderId: number) {
+    setSelectedOrderLoading(true);
+    try {
+      const data = await OrderApi.getById(orderId);
+      setSelectedOrder(data);
+    } finally {
+      setSelectedOrderLoading(false);
+    }
+  }
+
+  // Generate invoice
+  async function generateInvoice(orderId: number) {
+    setInvoiceLoading(true);
+    try {
+      const blob = await OrderApi.generateInvoice(orderId);
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `invoice-order-${orderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } finally {
+      setInvoiceLoading(false);
+    }
+  }
+
+  return {
+    orders,
+    ordersLoading,
+    selectedOrder,
+    selectedOrderLoading,
+    invoiceLoading,
+    fetchOrderById,
+    generateInvoice,
+  };
 }
