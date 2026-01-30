@@ -4,11 +4,13 @@ import { ApiClient } from "./ApiClient"
 export const OrderApi = {
     getAll: async (page: number = 0, size: number = 10) => {
         const res = await ApiClient.get<OrderData[]>("/orders", { params : { page, size } });
+        console.log(res.data);
+        
         return res.data;
     },
 
     getById: async (id: number, page: number = 0, size: number = 10) => {
-        const res = await ApiClient.get<OrderData[]>("/orders", { params: { id, page, size } });
+        const res = await ApiClient.get<OrderData>("/orders", { params: { id, page, size } });
         return res.data;
     },
 

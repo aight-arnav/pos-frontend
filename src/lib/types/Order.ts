@@ -14,6 +14,7 @@ export interface OrderItemForm {
 }
 
 export interface OrderData extends AuditedData {
+  id: number;
   orderItems: OrderItemData[];
 }
 
