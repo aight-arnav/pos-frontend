@@ -30,9 +30,6 @@ export function useInventory() {
     productId: number,
     form: InventoryForm
   ) => {
-    console.log(productId);
-    console.log(form);
-    
     const updated = await InventoryApi.update(productId, form);
     setInventory(prev =>
       prev.map(item =>
