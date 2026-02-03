@@ -1,4 +1,6 @@
 import axios from "axios";
+import { extractErrorMessage } from "../error";
+import toast from "react-hot-toast";
 
 const ApiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_POS_API_URL,
@@ -11,7 +13,9 @@ const ApiClient = axios.create({
 ApiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response?.data || error.message);
+    const message = extractErrorMessage(error);
+    toast.error(message);
+    console.error(error.response?.data);
     return Promise.reject(error);
   }
 );
@@ -24,7 +28,9 @@ const MultipartApiClient = axios.create({
 MultipartApiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error.response?.data || error.message);
+    const message = extractErrorMessage(error);
+    toast.error(message);
+    console.error(error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
