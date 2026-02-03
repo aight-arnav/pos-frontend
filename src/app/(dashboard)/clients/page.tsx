@@ -15,14 +15,14 @@ export default function ClientsPage() {
               Clients
             </h1>
             <p className="text-muted-foreground mt-2">
-              Manage your client master data and subscription tiers.
+              Manage your client master data.
             </p>
           </div>
           <AddClientDialog />
         </div>
 
         {/* Utilities Bar */}
-        <div className="flex items-center justify-between gap-4">
+        {/* <div className="flex items-center justify-between gap-4">
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input 
@@ -41,7 +41,7 @@ export default function ClientsPage() {
                <Download className="w-4 h-4" />
              </Button>
           </div>
-        </div>
+        </div> */}
 
         {/* Table Container */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
