@@ -82,7 +82,7 @@ export function ClientFormDialog({ trigger, initialData, onSubmit }: Props) {
             <PrimaryButton 
               onClick={handleSubmit}
               disabled={clientName.trim().length === 0 || isSubmitting}
-              className="min-w-[100px]"
+              className="min-w-25"
             >
               {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (isEdit ? "Update" : "Create Client")}
             </PrimaryButton>

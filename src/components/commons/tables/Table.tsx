@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   Table as ShadTable,
   TableBody,
@@ -13,11 +13,21 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Settings2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 
 
 type AccessorColumn<T> = {
   key: keyof T;
   label: string;
+  hidden?: boolean;
   width?: string;
   align?: "left" | "center" | "right";
   sortable?: boolean;
@@ -27,6 +37,7 @@ type AccessorColumn<T> = {
 type VirtualColumn<T> = {
   key: string;
   label: string;
+  hidden?: boolean;
   width?: string;
   align?: "left" | "center" | "right";
   sortable?: boolean;
@@ -45,6 +56,7 @@ interface TableProps<T> {
     total: number;
     page: number;
     pageSize: number;
+    label?: string;
     onPageChange?: (page: number) => void;
     onPageSizeChange?: (size: number) => void;
   };
@@ -63,6 +75,14 @@ export function TableComponent<T extends { id?: number | string }>({
   pagination,
   dateFilter,
 }: TableProps<T>) {
+    const [visibleColumns, setVisibleColumns] = useState(
+      columns.filter((c) => !c.hidden).map((c) => String(c.key))
+    );
+
+    const activeColumns = columns.filter((c) =>
+      visibleColumns.includes(String(c.key))
+    );
+
   const totalPages = pagination
     ? Math.ceil(pagination.total / pagination.pageSize)
     : 1;
@@ -75,7 +95,7 @@ export function TableComponent<T extends { id?: number | string }>({
           <Search className="w-4 h-4 text-gray-400 absolute left-2 pointer-events-none" />
           <Input
             placeholder={searchPlaceholder || "Search..."}
-            className="pl-8 bg-white border-none focus:border-none "
+            className="pl-8 bg-transparent border-none shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
           />
         </div>
 
@@ -86,13 +106,61 @@ export function TableComponent<T extends { id?: number | string }>({
             </Button>
           )}
           {pagination && (
-            <Button size="sm" variant="outline">
-              Show {pagination.pageSize} rows
-            </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline">
+                    Show {pagination.pageSize} rows
+                </Button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent align="end">
+                {[5, 10, 20, 50].map((size) => (
+                    <DropdownMenuItem
+                    key={size}
+                    onClick={() => pagination.onPageSizeChange?.(size)}
+                    >
+                    {size} rows
+                    </DropdownMenuItem>
+                ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
           )}
-          <Button size="sm" variant="outline">
-            <Settings2 className="w-4 h-4" /> Manage Columns
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="outline">
+                <Settings2 className="w-4 h-4 mr-2" />
+                Manage Columns
+                </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end" className="w-48">
+                {columns.map((col) => {
+                const key = String(col.key);
+                const checked = visibleColumns.includes(key);
+
+                return (
+                    <DropdownMenuItem
+                    key={key}
+                    onClick={() =>
+                        setVisibleColumns((prev) =>
+                        checked
+                            ? prev.filter((k) => k !== key)
+                            : [...prev, key]
+                        )
+                    }
+                    >
+                    <input
+                        type="checkbox"
+                        checked={checked}
+                        readOnly
+                        className="mr-2"
+                    />
+                    {col.label}
+                    </DropdownMenuItem>
+                );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -100,7 +168,7 @@ export function TableComponent<T extends { id?: number | string }>({
       <ShadTable>
         <TableHeader className="bg-gray-50">
           <TableRow>
-            {columns.map((col) => (
+            {activeColumns.map((col) => (
               <TableHead
                 key={String(col.key)}
                 className={`px-6 py-3 text-xs font-semibold uppercase text-gray-600 ${
@@ -118,7 +186,7 @@ export function TableComponent<T extends { id?: number | string }>({
           {loading
             ? Array.from({ length: 5 }).map((_, idx) => (
                 <TableRow key={idx} className="animate-pulse">
-                  {columns.map((col) => (
+                  {activeColumns.map((col) => (
                     <TableCell key={String(col.key)} className="px-6 py-4">
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
@@ -130,7 +198,7 @@ export function TableComponent<T extends { id?: number | string }>({
                   key={row.id ?? idx}
                   className="hover:bg-gray-50 border-b border-gray-100 transition-colors"
                 >
-                  {columns.map((col) => (
+                  {activeColumns.map((col) => (
                     <TableCell
                       key={String(col.key)}
                       className={`px-6 py-4 text-sm text-gray-700 ${
@@ -166,29 +234,42 @@ export function TableComponent<T extends { id?: number | string }>({
             of{" "}
             <span className="font-medium text-gray-900">
               {pagination.total}
-            </span>
+            </span>{" "}
+            {pagination.label ?? "items"}
           </div>
 
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1">
+            <Button
+                size="sm"
+                variant="outline"
+                onClick={() =>
+                pagination.onPageChange?.(pagination.page - 1)
+                }
+                disabled={pagination.page <= 1}
+            >
+                <ChevronLeft className="w-4 h-4" />
+            </Button>
+
             {Array.from({ length: totalPages }).map((_, i) => (
-              <Button
+                <Button
                 key={i}
                 size="sm"
                 variant={i + 1 === pagination.page ? "default" : "outline"}
                 onClick={() => pagination.onPageChange?.(i + 1)}
-              >
+                >
                 {i + 1}
-              </Button>
+                </Button>
             ))}
+
             <Button
-              size="sm"
-              variant="outline"
-              onClick={() =>
+                size="sm"
+                variant="outline"
+                onClick={() =>
                 pagination.onPageChange?.(pagination.page + 1)
-              }
-              disabled={pagination.page >= totalPages}
+                }
+                disabled={pagination.page >= totalPages}
             >
-              &gt;
+                <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
