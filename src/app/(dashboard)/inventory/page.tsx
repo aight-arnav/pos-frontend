@@ -1,7 +1,7 @@
 "use client";
 
 import { InventoryTable } from "@/components/inventory/InventoryTable";
-import { InventoryUpload } from "@/components/inventory/InventoryUpload";
+import { InventoryUploadDialog } from "@/components/inventory/InventoryUploadDialog";
 import { useInventory } from "@/hooks/useInventory";
 
 export default function InventoryPage() {
@@ -13,14 +13,31 @@ export default function InventoryPage() {
   } = useInventory();
 
   return (
-    <div className="p-6 space-y-6">
-      <InventoryUpload onUpload={uploadTsv} />
+    <div className="min-h-screen bg-[#F9FAFB] p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex items-end justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+              Inventory
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Manage product stock and bulk uploads.
+            </p>
+          </div>
 
-      <InventoryTable
-        inventory={inventory}
-        loading={loading}
-        onUpdate={updateInventory}
-      />
+          <InventoryUploadDialog onUpload={uploadTsv} />
+        </div>
+
+        {/* Table */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <InventoryTable
+            inventory={inventory}
+            loading={loading}
+            onUpdate={updateInventory}
+          />
+        </div>
+      </div>
     </div>
   );
 }
