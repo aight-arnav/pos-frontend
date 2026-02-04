@@ -7,15 +7,24 @@ export default function OrdersPage() {
   const { orders, ordersLoading } = useOrders();
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">
-        Orders
-      </h1>
+    <div className="min-h-screen bg-[#F9FAFB] p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+            Orders
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            View and manage customer orders.
+          </p>
+        </div>
 
-      <OrderTable
-        orders={orders}
-        loading={ordersLoading}
-      />
+        {/* Table */}
+        <OrderTable
+          orders={orders}
+          loading={ordersLoading}
+        />
+      </div>
     </div>
   );
 }
