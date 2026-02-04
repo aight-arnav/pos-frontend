@@ -1,12 +1,9 @@
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+"use client";
+
+import { useState } from "react";
+import { TableComponent, Column } from "@/components/commons/tables/Table";
 import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
-import { InventoryRow } from "./InventoryRow";
+import { InventoryFormDialog } from "./InventoryFormDialog";
 
 interface Props {
   inventory: InventoryData[];
@@ -15,41 +12,59 @@ interface Props {
 }
 
 export function InventoryTable({ inventory, loading, onUpdate }: Props) {
-  if (loading) {
-    return (
-      <div className="text-sm text-muted-foreground">
-        Loading inventory…
-      </div>
-    );
-  }
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const columns: Column<InventoryData>[] = [
+    {
+      key: "productName",
+      label: "Product",
+    },
+    {
+      key: "barcode",
+      label: "Barcode",
+    },
+    {
+      key: "quantity",
+      label: "Quantity",
+      align: "right",
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      align: "right",
+      render: (row) => (
+        <InventoryFormDialog
+          triggerLabel="Edit"
+          initialData={row}
+          onSubmit={(form) =>
+            onUpdate(row.productId, form)
+          }
+        />
+      ),
+    },
+  ];
 
   return (
-    <div className="rounded-xl border border-border overflow-hidden">
-      <Table>
-        <TableHeader className="bg-muted">
-          <TableRow>
-            <TableHead>Product</TableHead>
-            <TableHead>Barcode</TableHead>
-            <TableHead className="text-right">
-              Quantity
-            </TableHead>
-            <TableHead className="text-right">
-              Actions
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-
-        <TableBody>
-          {inventory.map((item, index) => (
-            <InventoryRow
-              key={item.productId}
-              item={item}
-              index={index}
-              onUpdate={onUpdate}
-            />
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <TableComponent
+      columns={columns}
+      data={inventory.slice(
+        (page - 1) * pageSize,
+        page * pageSize
+      )}
+      loading={loading}
+      rowKey={"productId"}
+      searchPlaceholder="Search inventory..."
+      pagination={{
+        total: inventory.length,
+        page,
+        pageSize,
+        onPageChange: setPage,
+        onPageSizeChange: (size) => {
+          setPageSize(size);
+          setPage(1);
+        },
+      }}
+    />
   );
 }

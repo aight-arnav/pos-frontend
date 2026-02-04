@@ -18,8 +18,7 @@ export function ClientTable() {
     {
       key: "serial",
       label: "S.No",
-      render: (_, idx) => idx + 1,
-      align: "left",
+      render: (_, idx) => (page - 1) * pageSize + idx + 1, // ✅ pagination-safe
     },
     {
       key: "clientName",
@@ -28,7 +27,14 @@ export function ClientTable() {
     {
       key: "createdAt",
       label: "Created At",
-      render: (row: ClientData) => row.createdAt ? new Date(row.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }) : "-",
+      render: (row) =>
+        row.createdAt
+          ? new Date(row.createdAt).toLocaleString("en-IN", {
+              dateStyle: "medium",
+              timeStyle: "short",
+              timeZone: "Asia/Kolkata",
+            })
+          : "-",
     },
     {
       key: "actions",
@@ -40,7 +46,7 @@ export function ClientTable() {
           onSubmit={(form) => updateClient(row.id, form)}
           trigger={
             <OutlineButton size="sm">
-              <Pencil className="w-4 h-4" />
+              <Pencil className="w-4 h-4 mr-1" />
               Edit client
             </OutlineButton>
           }
@@ -49,20 +55,23 @@ export function ClientTable() {
     },
   ];
 
-  return <TableComponent
-    columns={columns}
-    data={clients.slice((page - 1) * pageSize, page * pageSize)}
-    loading={loading}
-    searchPlaceholder="Search clients..."
-    pagination={{
-      total: clients.length || 60, // dummy fallback
-      page: page,
-      pageSize: pageSize,
-      onPageChange: setPage,
-      onPageSizeChange: (size) => {
-        setPageSize(size);
-        setPage(1);
-      },
-    }}
-  />
+  return (
+    <TableComponent
+      columns={columns}
+      data={clients.slice((page - 1) * pageSize, page * pageSize)}
+      loading={loading}
+      rowKey="id" // ✅ FIX
+      searchPlaceholder="Search clients..."
+      pagination={{
+        total: clients.length || 60, // fallback ok for now
+        page,
+        pageSize,
+        onPageChange: setPage,
+        onPageSizeChange: (size) => {
+          setPageSize(size);
+          setPage(1);
+        },
+      }}
+    />
+  );
 }
