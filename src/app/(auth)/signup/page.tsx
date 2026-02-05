@@ -7,6 +7,7 @@ import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function SignupPage() {
   const { signup } = useAuth();
@@ -28,46 +29,53 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardContent className="p-6 space-y-6">
-          <h1 className="text-2xl font-semibold text-center">
-            Create Account
-          </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+      <Card className="w-full max-w-md shadow-lg border border-gray-200">
+        <CardContent className="p-8 space-y-6">
+          <div className="text-center space-y-1">
+            <h1 className="text-2xl font-semibold">Create your account</h1>
+            <p className="text-sm text-muted-foreground">
+              Get started in just a few seconds
+            </p>
+          </div>
 
           <div className="space-y-4">
-            <div>
-              <Label>Name</Label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-
-            <div>
+            <div className="space-y-1">
               <Label>Email</Label>
               <Input
+                placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            <div>
+            <div className="space-y-1">
               <Label>Password</Label>
               <Input
                 type="password"
+                placeholder="Create a strong password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
             <PrimaryButton
-              className="w-full"
+              className="w-full mt-2"
               onClick={handleSubmit}
               disabled={loading}
             >
-              {loading ? "Creating…" : "Sign up"}
+              {loading ? "Creating account…" : "Sign up"}
             </PrimaryButton>
+          </div>
+
+          <div className="text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="text-primary font-medium hover:underline"
+            >
+              Log in
+            </Link>
           </div>
         </CardContent>
       </Card>
