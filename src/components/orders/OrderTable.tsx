@@ -7,6 +7,7 @@ import { OrderDetailsDialog } from "./OrderDetailsDialog";
 import { formatIST } from "@/lib/utils/date";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Eye } from "lucide-react";
+import { useOrders } from "@/hooks/useOrders";
 
 interface Props {
   orders: OrderData[];
@@ -16,6 +17,7 @@ interface Props {
 export function OrderTable({ orders, loading }: Props) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const { generateInvoice } = useOrders();
 
   const columns: Column<OrderData>[] = [
     {
@@ -38,9 +40,12 @@ export function OrderTable({ orders, loading }: Props) {
       label: "Actions",
       align: "right",
       render: (row) => (
-        <OrderDetailsDialog
-          orderId={row.id}
-        />
+        <OutlineButton
+          size="sm"
+          onClick={() => generateInvoice(row.id)}
+        >
+          Invoice
+        </OutlineButton>
       ),
     },
   ];
