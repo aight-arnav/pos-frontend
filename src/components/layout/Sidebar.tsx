@@ -85,24 +85,6 @@ export function SidebarApp() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-
-        {/* SETTINGS */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="px-4 text-xs tracking-wide text-muted-foreground">
-            SETTINGS
-          </SidebarGroupLabel>
-
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <Moon className="h-4 w-4" />
-                  Dark Mode
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
 
       {/* Footer */}
