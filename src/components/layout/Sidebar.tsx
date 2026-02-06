@@ -1,59 +1,121 @@
 "use client";
 
+import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "@/components/ui/sidebar";
+import {
+  LayoutDashboard,
+  Users,
+  Package,
+  Boxes,
+  ShoppingCart,
+  LogOut,
+  Moon,
+  Sparkles,
+} from "lucide-react";
 import clsx from "clsx";
 import { Button } from "@/components/ui/button";
 
-const NAV_ITEMS = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Clients", href: "/clients" },
-  { label: "Products", href: "/products" },
-  { label: "Inventory", href: "/inventory" },
-  { label: "Orders", href: "/orders" },
+const MAIN_ITEMS = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Clients", href: "/clients", icon: Users },
+  { label: "Products", href: "/products", icon: Package },
+  { label: "Inventory", href: "/inventory", icon: Boxes },
+  { label: "Orders", href: "/orders", icon: ShoppingCart },
 ];
 
-export function Sidebar() {
+export function SidebarApp() {
   const pathname = usePathname();
   const router = useRouter();
 
   function handleLogout() {
-    // later: clear auth token
     router.push("/login");
   }
 
   return (
-    <aside className="w-64 border-r bg-white flex flex-col">
-      <div className="p-6 font-semibold text-lg border-b">
+    <Sidebar className="bg-muted/40 border-r">
+      {/* Top brand */}
+      <div className="px-6 py-5 border-b font-semibold text-lg">
         POS System
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
-        {NAV_ITEMS.map(item => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={clsx(
-              "block px-4 py-2 rounded-lg text-sm",
-              pathname === item.href
-                ? "bg-muted font-medium"
-                : "hover:bg-muted/50"
-            )}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+      <SidebarContent>
+        {/* MAIN */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-4 text-xs tracking-wide text-muted-foreground">
+            MAIN
+          </SidebarGroupLabel>
 
-      <div className="p-4 border-t">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {MAIN_ITEMS.map(item => {
+                const active = pathname === item.href;
+                const Icon = item.icon;
+
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild>
+                      <Link
+                        href={item.href}
+                        className={clsx(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                          active
+                            ? "bg-background shadow-sm font-medium"
+                            : "hover:bg-background/70"
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* SETTINGS */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="px-4 text-xs tracking-wide text-muted-foreground">
+            SETTINGS
+          </SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton>
+                  <Moon className="h-4 w-4" />
+                  Dark Mode
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      {/* Footer */}
+      <SidebarFooter className="p-4 space-y-3">
         <Button
           variant="outline"
-          className="w-full"
+          className="w-full flex items-center gap-2"
           onClick={handleLogout}
         >
+          <LogOut className="h-4 w-4" />
           Logout
         </Button>
-      </div>
-    </aside>
+      </SidebarFooter>
+    </Sidebar>
   );
 }

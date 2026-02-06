@@ -58,7 +58,7 @@ export function OrderTable({ orders, loading }: Props) {
       rowKey="id"
       searchPlaceholder="Search orders..."
       pagination={{
-        total: orders.length || 50, // dummy fallback
+        total: orders.length || 50,
         page,
         pageSize,
         label: "orders",
@@ -67,6 +67,29 @@ export function OrderTable({ orders, loading }: Props) {
           setPageSize(size);
           setPage(1);
         },
+      }}
+      expandable={{
+        renderExpandedRow: (order) => (
+          <div className="rounded-lg border bg-white p-4">
+            <div className="mb-2 text-sm font-medium text-muted-foreground">
+              Order Items
+            </div>
+
+            <div className="space-y-2">
+              {order.orderItems.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="flex justify-between text-sm"
+                >
+                  <span>{item.productName}</span>
+                  <span className="text-muted-foreground">
+                    {item.quantity} × ₹{item.sellingPrice}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ),
       }}
     />
   );

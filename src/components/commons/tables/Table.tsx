@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import {
   Table as ShadTable,
   TableBody,
@@ -13,12 +13,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Search,
-  Settings2,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronRight as ChevronRightIcon,
+  Search,
+  Settings2,
 } from "lucide-react";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+/* ---------------- column types ---------------- */
 
 type AccessorColumn<T> = {
   key: keyof T;
@@ -33,7 +35,6 @@ type AccessorColumn<T> = {
   hidden?: boolean;
   width?: string;
   align?: "left" | "center" | "right";
-  sortable?: boolean;
   render?: (row: T, index: number) => ReactNode;
 };
 
@@ -43,17 +44,17 @@ type VirtualColumn<T> = {
   hidden?: boolean;
   width?: string;
   align?: "left" | "center" | "right";
-  sortable?: boolean;
   render: (row: T, index: number) => ReactNode;
 };
 
 export type Column<T> = AccessorColumn<T> | VirtualColumn<T>;
 
+/* ---------------- props ---------------- */
 
 interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
-  rowKey: keyof T; // ✅ NEW
+  rowKey: keyof T;
   loading?: boolean;
   searchPlaceholder?: string;
   pagination?: {
@@ -61,12 +62,11 @@ interface TableProps<T> {
     page: number;
     pageSize: number;
     label?: string;
-    onPageChange?: (page: number) => void;
-    onPageSizeChange?: (size: number) => void;
+    onPageChange: (page: number) => void;
+    onPageSizeChange: (size: number) => void;
   };
-  dateFilter?: {
-    value: string;
-    onClick: () => void;
+  expandable?: {
+    renderExpandedRow: (row: T) => ReactNode;
   };
 }
 
@@ -79,39 +79,40 @@ export function TableComponent<T>({
   loading,
   searchPlaceholder,
   pagination,
-  dateFilter,
+  expandable,
 }: TableProps<T>) {
-  const [visibleColumns, setVisibleColumns] = useState(
+  const [expandedRow, setExpandedRow] = useState<T[keyof T] | null>(null);
+
+  const [visibleColumnKeys, setVisibleColumnKeys] = useState<string[]>(
     columns.filter((c) => !c.hidden).map((c) => String(c.key))
   );
 
-  const activeColumns = columns.filter((c) =>
-    visibleColumns.includes(String(c.key))
+  const activeColumns = useMemo(
+    () => columns.filter((c) => visibleColumnKeys.includes(String(c.key))),
+    [columns, visibleColumnKeys]
   );
 
   const totalPages = pagination
     ? Math.ceil(pagination.total / pagination.pageSize)
     : 1;
 
+  function toggleExpand(key: T[keyof T]) {
+    setExpandedRow((prev) => (prev === key ? null : key));
+  }
+
   return (
-    <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm bg-white">
-      {/* Top Utilities */}
+    <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      {/* ---------- toolbar ---------- */}
       <div className="flex flex-wrap items-center justify-between gap-2 p-4 border-b">
         <div className="relative w-full max-w-md">
-          <Search className="absolute left-2 top-2.5 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder={searchPlaceholder || "Search..."}
-            className="pl-8 border-none shadow-none focus-visible:ring-0"
+            placeholder={searchPlaceholder ?? "Search..."}
+            className="pl-8"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          {dateFilter && (
-            <Button size="sm" variant="outline" onClick={dateFilter.onClick}>
-              {dateFilter.value}
-            </Button>
-          )}
-
           {pagination && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -123,7 +124,7 @@ export function TableComponent<T>({
                 {[5, 10, 20, 50].map((size) => (
                   <DropdownMenuItem
                     key={size}
-                    onClick={() => pagination.onPageSizeChange?.(size)}
+                    onClick={() => pagination.onPageSizeChange(size)}
                   >
                     {size} rows
                   </DropdownMenuItem>
@@ -136,26 +137,31 @@ export function TableComponent<T>({
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="outline">
                 <Settings2 className="w-4 h-4 mr-2" />
-                Manage Columns
+                Columns
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               {columns.map((col) => {
                 const key = String(col.key);
-                const checked = visibleColumns.includes(key);
+                const checked = visibleColumnKeys.includes(key);
 
                 return (
                   <DropdownMenuItem
                     key={key}
                     onClick={() =>
-                      setVisibleColumns((prev) =>
+                      setVisibleColumnKeys((prev) =>
                         checked
                           ? prev.filter((k) => k !== key)
                           : [...prev, key]
                       )
                     }
                   >
-                    <input type="checkbox" readOnly checked={checked} className="mr-2" />
+                    <input
+                      type="checkbox"
+                      readOnly
+                      checked={checked}
+                      className="mr-2"
+                    />
                     {col.label}
                   </DropdownMenuItem>
                 );
@@ -165,10 +171,11 @@ export function TableComponent<T>({
         </div>
       </div>
 
-      {/* Table */}
+      {/* ---------- table ---------- */}
       <ShadTable>
-        <TableHeader className="bg-gray-50">
+        <TableHeader className="bg-muted">
           <TableRow>
+            {expandable && <TableHead className="w-10" />}
             {activeColumns.map((col) => (
               <TableHead
                 key={String(col.key)}
@@ -186,6 +193,11 @@ export function TableComponent<T>({
           {loading
             ? Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
+                  {expandable && (
+                    <TableCell>
+                      <Skeleton className="h-4 w-4" />
+                    </TableCell>
+                  )}
                   {activeColumns.map((col) => (
                     <TableCell key={String(col.key)} className="px-6 py-4">
                       <Skeleton className="h-4 w-full" />
@@ -193,37 +205,68 @@ export function TableComponent<T>({
                   ))}
                 </TableRow>
               ))
-            : data.map((row, idx) => (
-                <TableRow
-                  key={String(row[rowKey])} // ✅ FIXED
-                  className="hover:bg-gray-50"
-                >
-                  {activeColumns.map((col) => (
-                    <TableCell
-                      key={String(col.key)}
-                      className={`px-6 py-4 ${
-                        col.align === "right" ? "text-right" : "text-left"
-                      }`}
-                    >
-                      {"render" in col && col.render
-                        ? col.render(row, idx)
-                        : (row[col.key as keyof T] as ReactNode)}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+            : data.map((row, index) => {
+                const key = row[rowKey];
+                const expanded = expandedRow === key;
+
+                return (
+                  <React.Fragment key={String(key)}>
+                    <TableRow className="hover:bg-muted/40">
+                      {expandable && (
+                        <TableCell className="px-2">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => toggleExpand(key)}
+                          >
+                            {expanded ? (
+                              <ChevronDown className="w-4 h-4" />
+                            ) : (
+                              <ChevronRightIcon className="w-4 h-4" />
+                            )}
+                          </Button>
+                        </TableCell>
+                      )}
+
+                      {activeColumns.map((col) => (
+                        <TableCell
+                          key={String(col.key)}
+                          className={`px-6 py-4 ${
+                            col.align === "right" ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {"render" in col && col.render
+                            ? col.render(row, index)
+                            : (row[col.key as keyof T] as ReactNode)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+
+                    {expanded && expandable && (
+                      <TableRow className="bg-muted/30">
+                        <TableCell
+                          colSpan={activeColumns.length + 1}
+                          className="px-6 py-4"
+                        >
+                          {expandable.renderExpandedRow(row)}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                );
+              })}
         </TableBody>
       </ShadTable>
 
-      {/* Pagination */}
+      {/* ---------- pagination ---------- */}
       {pagination && (
-        <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-t text-sm">
+        <div className="flex items-center justify-between px-6 py-3 border-t bg-muted/20 text-sm">
           <div>
             Showing{" "}
             <strong>
               {(pagination.page - 1) * pagination.pageSize + 1}
-            </strong>
-            –
+            </strong>{" "}
+            –{" "}
             <strong>
               {Math.min(
                 pagination.page * pagination.pageSize,
@@ -239,9 +282,7 @@ export function TableComponent<T>({
               size="sm"
               variant="outline"
               disabled={pagination.page <= 1}
-              onClick={() =>
-                pagination.onPageChange?.(pagination.page - 1)
-              }
+              onClick={() => pagination.onPageChange(pagination.page - 1)}
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
@@ -250,8 +291,8 @@ export function TableComponent<T>({
               <Button
                 key={i}
                 size="sm"
-                variant={i + 1 === pagination.page ? "default" : "outline"}
-                onClick={() => pagination.onPageChange?.(i + 1)}
+                variant={pagination.page === i + 1 ? "default" : "outline"}
+                onClick={() => pagination.onPageChange(i + 1)}
               >
                 {i + 1}
               </Button>
@@ -261,9 +302,7 @@ export function TableComponent<T>({
               size="sm"
               variant="outline"
               disabled={pagination.page >= totalPages}
-              onClick={() =>
-                pagination.onPageChange?.(pagination.page + 1)
-              }
+              onClick={() => pagination.onPageChange(pagination.page + 1)}
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
