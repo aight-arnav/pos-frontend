@@ -14,7 +14,7 @@ export function useOrderCreation() {
       if (existing) {
         return prev.map(i =>
           i.barcode === item.barcode
-            ? { ...i, quantity: i.quantity + item.quantity }
+            ? { ...i, quantity: i.quantity + item.quantity, sellingPrice: item.sellingPrice }
             : i
         );
       }

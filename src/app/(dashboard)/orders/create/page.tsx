@@ -1,9 +1,8 @@
 "use client";
 
-import { OrderItemsTable } from "@/components/orders/OrderItemsTable";
-import { AddOrderItemDialog } from "@/components/orders/AddOrderItemDialog";
 import { Button } from "@/components/ui/button";
 import { useOrderCreation } from "@/hooks/useOrderCreation";
+import { CreateOrderTable } from "@/components/orders/CreateOrderTable";
 
 export default function CreateOrderPage() {
   const {
@@ -16,28 +15,31 @@ export default function CreateOrderPage() {
   } = useOrderCreation();
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">
-          Create Order
-        </h1>
+    <div className="min-h-screen bg-[#F9FAFB] p-8">
+      <div className="max-w-5xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">New Order</h1>
+            <p className="text-muted-foreground">
+              Scan items and press Enter to continue
+            </p>
+          </div>
 
-        <AddOrderItemDialog onAdd={addItem} />
-      </div>
+          <Button
+            disabled={items.length === 0 || loading}
+            onClick={submitOrder}
+          >
+            {loading ? "Placing Order..." : "Place Order"}
+          </Button>
+        </div>
 
-      <OrderItemsTable
-        items={items}
-        onUpdate={updateItem}
-        onRemove={removeItem}
-      />
-
-      <div className="flex justify-end">
-        <Button
-          disabled={items.length === 0 || loading}
-          onClick={submitOrder}
-        >
-          {loading ? "Placing Order..." : "Place Order"}
-        </Button>
+        <CreateOrderTable
+          items={items}
+          onAdd={addItem}
+          onUpdate={updateItem}
+          onRemove={removeItem}
+        />
       </div>
     </div>
   );
