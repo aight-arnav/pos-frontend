@@ -33,6 +33,7 @@ const MAIN_ITEMS = [
   { label: "Products", href: "/products", icon: Package },
   { label: "Inventory", href: "/inventory", icon: Boxes },
   { label: "Orders", href: "/orders", icon: ShoppingCart },
+  { label: "Create order", href: "/orders/create", icon: ShoppingCart },
 ];
 
 export function SidebarApp() {
