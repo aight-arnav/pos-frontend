@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
-import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
-import { InventoryFormDialog } from "./InventoryFormDialog";
+import { ProductData, ProductForm } from "@/lib/types/Product";
+import { ProductFormDialog } from "@/components/products/ProductFormDialog";
 
 interface Props {
-  inventory: InventoryData[];
+  products: ProductData[];
   loading: boolean;
-  onUpdate: (productId: number, form: InventoryForm) => Promise<void>;
+  onUpdate: (id: number, form: ProductForm) => Promise<void>;
 }
 
-export function InventoryTable({ inventory, loading, onUpdate }: Props) {
+export function ProductTable({ products, loading, onUpdate }: Props) {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const columns: Column<InventoryData>[] = [
+  const columns: Column<ProductData>[] = [
     {
       key: "productName",
       label: "Product",
@@ -25,8 +25,14 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
       label: "Barcode",
     },
     {
-      key: "quantity",
-      label: "Quantity",
+      key: "mrp",
+      label: "MRP",
+      align: "right",
+      render: (row) => `₹ ${row.mrp.toFixed(2)}`,
+    },
+    {
+      key: "clientId",
+      label: "Client",
       align: "right",
     },
     {
@@ -34,12 +40,10 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
       label: "Actions",
       align: "right",
       render: (row) => (
-        <InventoryFormDialog
+        <ProductFormDialog
           triggerLabel="Edit"
           initialData={row}
-          onSubmit={(form) =>
-            onUpdate(row.productId, form)
-          }
+          onSubmit={(form) => onUpdate(row.id, form)}
         />
       ),
     },
@@ -48,15 +52,15 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
   return (
     <TableComponent
       columns={columns}
-      data={inventory.slice(
+      data={products.slice(
         (page - 1) * pageSize,
         page * pageSize
       )}
       loading={loading}
-      rowKey={"productId"}
-      searchPlaceholder="Search inventory..."
+      rowKey={"id"}
+      searchPlaceholder="Search products..."
       pagination={{
-        total: inventory.length,
+        total: products.length,
         page,
         pageSize,
         onPageChange: setPage,
