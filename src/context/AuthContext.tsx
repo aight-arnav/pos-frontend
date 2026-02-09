@@ -75,9 +75,10 @@ export function AuthProvider({
     setUser(user);
   }
 
-  function logout() {
+  async function logout() {
+    await AuthApi.logout();
     setUser(null);
-    // optional: clear cookies / tokens if added later
+    router.push("/login")
   }
 
   return (

@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 const MAIN_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -39,9 +40,10 @@ const MAIN_ITEMS = [
 export function SidebarApp() {
   const pathname = usePathname();
   const router = useRouter();
+  const { logout } = useAuth();
 
   function handleLogout() {
-    router.push("/login");
+    logout();
   }
 
   return (
