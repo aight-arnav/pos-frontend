@@ -30,7 +30,7 @@ export default function InventoryPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-hidden">
           <InventoryTable
             inventory={inventory}
             loading={loading}

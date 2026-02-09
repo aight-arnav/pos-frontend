@@ -45,9 +45,12 @@ export function ClientTable() {
           initialData={row}
           onSubmit={(form) => updateClient(row.id, form)}
           trigger={
-            <OutlineButton size="sm">
-              <Pencil className="w-4 h-4 mr-1" />
-              Edit client
+            <OutlineButton
+              size="sm"
+              className="rounded-sm px-3 text-zinc-600 hover:text-zinc-900"
+            >
+              <Pencil className="mr-1 h-4 w-4" />
+              Edit
             </OutlineButton>
           }
         />

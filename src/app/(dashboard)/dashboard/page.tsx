@@ -21,7 +21,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Reports */}
-        <div className="bg-white rounded-xl border shadow-sm p-6 space-y-6">
+        <div className="bg-white rounded-xl border p-6 space-y-6">
           <h2 className="text-xl font-semibold">
             Sales Report
           </h2>

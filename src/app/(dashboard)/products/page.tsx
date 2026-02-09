@@ -33,7 +33,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-hidden">
           <ProductTable
             products={products}
             loading={loading}

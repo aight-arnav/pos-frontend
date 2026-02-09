@@ -101,14 +101,27 @@ export function TableComponent<T>({
   }
 
   return (
-    <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
       {/* ---------- toolbar ---------- */}
-      <div className="flex flex-wrap items-center justify-between gap-2 p-4 border-b">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b bg-zinc-50/60 px-4 py-3">
         <div className="relative w-full max-w-md">
-          <Search className="absolute left-2 top-2.5 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
           <Input
             placeholder={searchPlaceholder ?? "Search..."}
-            className="pl-8"
+            className="
+              h-9
+              bg-transparent
+              border-0
+              pl-9
+              text-xl
+              shadow-none
+              focus:outline-none
+              focus:ring-0
+              focus:border-0
+              focus-visible:outline-none
+              focus-visible:ring-0
+              focus-visible:border-0
+            "
           />
         </div>
 
@@ -116,7 +129,11 @@ export function TableComponent<T>({
           {pagination && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-9 rounded-sm border-zinc-200 bg-white px-4 text-sm"
+                >
                   Show {pagination.pageSize} rows
                 </Button>
               </DropdownMenuTrigger>
@@ -135,8 +152,12 @@ export function TableComponent<T>({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="sm" variant="outline">
-                <Settings2 className="w-4 h-4 mr-2" />
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-9 rounded-sm border-zinc-200 bg-white px-4 text-sm"
+              >
+                <Settings2 className="mr-2 h-4 w-4" />
                 Columns
               </Button>
             </DropdownMenuTrigger>
@@ -173,13 +194,13 @@ export function TableComponent<T>({
 
       {/* ---------- table ---------- */}
       <ShadTable>
-        <TableHeader className="bg-muted">
+        <TableHeader className="bg-zinc-50">
           <TableRow>
             {expandable && <TableHead className="w-10" />}
             {activeColumns.map((col) => (
               <TableHead
                 key={String(col.key)}
-                className={`px-6 py-3 text-xs font-semibold uppercase ${
+                className={`px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 ${
                   col.align === "right" ? "text-right" : "text-left"
                 }`}
               >
@@ -192,14 +213,22 @@ export function TableComponent<T>({
         <TableBody>
           {loading
             ? Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i}>
+                <TableRow
+                  key={i}
+                  className="transition-colors hover:bg-zinc-50"
+                >
                   {expandable && (
                     <TableCell>
                       <Skeleton className="h-4 w-4" />
                     </TableCell>
                   )}
                   {activeColumns.map((col) => (
-                    <TableCell key={String(col.key)} className="px-6 py-4">
+                    <TableCell
+                      key={String(col.key)}
+                      className={`px-6 py-4 text-sm text-zinc-700 ${
+                        col.align === "right" ? "text-right" : "text-left"
+                      }`}
+                    >
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
                   ))}
@@ -211,18 +240,19 @@ export function TableComponent<T>({
 
                 return (
                   <React.Fragment key={String(key)}>
-                    <TableRow className="hover:bg-muted/40">
+                    <TableRow className="transition-colors hover:bg-zinc-50">
                       {expandable && (
-                        <TableCell className="px-2">
+                        <TableCell>
                           <Button
                             size="icon"
                             variant="ghost"
+                            className="h-8 w-8 rounded-full hover:bg-zinc-100"
                             onClick={() => toggleExpand(key)}
                           >
                             {expanded ? (
-                              <ChevronDown className="w-4 h-4" />
+                              <ChevronDown className="h-4 w-4" />
                             ) : (
-                              <ChevronRightIcon className="w-4 h-4" />
+                              <ChevronRightIcon className="h-4 w-4" />
                             )}
                           </Button>
                         </TableCell>
@@ -231,7 +261,7 @@ export function TableComponent<T>({
                       {activeColumns.map((col) => (
                         <TableCell
                           key={String(col.key)}
-                          className={`px-6 py-4 ${
+                          className={`px-6 py-4 text-sm text-zinc-700 ${
                             col.align === "right" ? "text-right" : "text-left"
                           }`}
                         >
@@ -243,7 +273,7 @@ export function TableComponent<T>({
                     </TableRow>
 
                     {expanded && expandable && (
-                      <TableRow className="bg-muted/30">
+                      <TableRow className="bg-zinc-50/70">
                         <TableCell
                           colSpan={activeColumns.length + 1}
                           className="px-6 py-4"
@@ -260,7 +290,7 @@ export function TableComponent<T>({
 
       {/* ---------- pagination ---------- */}
       {pagination && (
-        <div className="flex items-center justify-between px-6 py-3 border-t bg-muted/20 text-sm">
+        <div className="flex items-center justify-between border-t bg-zinc-50/60 px-6 py-3 text-sm text-zinc-600">
           <div>
             Showing{" "}
             <strong>
@@ -283,16 +313,19 @@ export function TableComponent<T>({
               variant="outline"
               disabled={pagination.page <= 1}
               onClick={() => pagination.onPageChange(pagination.page - 1)}
+              className="h-8 w-8 rounded-sm p-0  border"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
 
             {Array.from({ length: totalPages }).map((_, i) => (
               <Button
                 key={i}
                 size="sm"
-                variant={pagination.page === i + 1 ? "default" : "outline"}
+                // variant={pagination.page === i + 1 ? "default" : "outline"}
+                variant="outline"
                 onClick={() => pagination.onPageChange(i + 1)}
+                className={`h-8 min-w-8 rounded-sm px-3 border ${pagination.page === i + 1 ? `border-black`: ``}`}
               >
                 {i + 1}
               </Button>
@@ -303,8 +336,9 @@ export function TableComponent<T>({
               variant="outline"
               disabled={pagination.page >= totalPages}
               onClick={() => pagination.onPageChange(pagination.page + 1)}
+              className="h-8 w-8 rounded-sm p-0 border"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
