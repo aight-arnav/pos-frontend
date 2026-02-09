@@ -15,14 +15,16 @@ export default function CreateOrderPage() {
   } = useOrderCreation();
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-8">
-      <div className="max-w-5xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-stone-100 px-6 py-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        {/* Header Section */}
+        <div className="flex items-end justify-between">
           <div>
-            <h1 className="text-2xl font-bold">New Order</h1>
-            <p className="text-muted-foreground">
-              Scan items and press Enter to continue
+            <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">
+              New Order
+            </h1>
+            <p className="mt-1 text-sm text-zinc-500">
+              Scan items and press Enter to continue.
             </p>
           </div>
 
@@ -34,12 +36,15 @@ export default function CreateOrderPage() {
           </Button>
         </div>
 
-        <CreateOrderTable
-          items={items}
-          onAdd={addItem}
-          onUpdate={updateItem}
-          onRemove={removeItem}
-        />
+        {/* Table */}
+        <div className="overflow-hidden">
+          <CreateOrderTable
+            items={items}
+            onAdd={addItem}
+            onUpdate={updateItem}
+            onRemove={removeItem}
+          />
+        </div>
       </div>
     </div>
   );

@@ -8,26 +8,23 @@ export default function DashboardPage() {
   const { data, loading, runReport } = useSalesReport();
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
+    <div className="min-h-screen bg-stone-100 px-6 py-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        {/* Header Section */}
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">
             Dashboard
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="mt-1 text-sm text-zinc-500">
             View sales performance and reports.
           </p>
         </div>
 
-        {/* Reports */}
-        <div className="bg-white rounded-xl border p-6 space-y-6">
-          <h2 className="text-xl font-semibold">
-            Sales Report
-          </h2>
+        {/* Filters */}
+        <SalesReportFilters onRun={runReport} />
 
-          <SalesReportFilters onRun={runReport} />
-
+        {/* Table */}
+        <div className="overflow-hidden">
           <SalesReportTable
             data={data}
             loading={loading}

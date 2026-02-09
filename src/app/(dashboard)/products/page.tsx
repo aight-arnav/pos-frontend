@@ -13,15 +13,15 @@ export default function ProductsPage() {
   } = useProduct();
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
+    <div className="min-h-screen bg-stone-100 px-6 py-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        {/* Header Section */}
         <div className="flex items-end justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+            <h1 className="text-2xl font-semibold text-zinc-900 tracking-tight">
               Products
             </h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="mt-1 text-sm text-zinc-500">
               Manage product catalog and pricing.
             </p>
           </div>
@@ -32,7 +32,7 @@ export default function ProductsPage() {
           />
         </div>
 
-        {/* Table */}
+        {/* Table Container */}
         <div className="overflow-hidden">
           <ProductTable
             products={products}
