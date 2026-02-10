@@ -13,7 +13,6 @@ export default function SignupPage() {
   const { signup } = useAuth();
   const router = useRouter();
 
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +28,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100">
       <Card className="w-full max-w-md shadow-lg border border-gray-200">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-1">
