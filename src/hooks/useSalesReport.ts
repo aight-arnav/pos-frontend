@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ReportsApi } from "@/lib/api/ReportApi";
 import { SalesReportData, SalesReportForm } from "@/lib/types/Report";
+import toast from "react-hot-toast";
 
 export function useSalesReport() {
   const [data, setData] = useState<SalesReportData[]>([]);
@@ -16,6 +17,7 @@ export function useSalesReport() {
     } finally {
       setLoading(false);
     }
+    toast.success("Report generated");
   }
 
   return { data, loading, runReport };

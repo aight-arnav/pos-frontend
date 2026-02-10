@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { OrderApi } from "@/lib/api/OrderApi";
 import { OrderData } from "@/lib/types/Order";
+import toast from "react-hot-toast";
 
 export function useOrders(page = 0, size = 10) {
   const [orders, setOrders] = useState<OrderData[]>([]);
@@ -61,6 +62,7 @@ export function useOrders(page = 0, size = 10) {
     } finally {
       setInvoiceLoading(false);
     }
+    toast.success("Invoice downloaded successfully");
   }
 
   return {

@@ -9,6 +9,7 @@ import {
 import { AuthApi } from "@/lib/api/AuthApi";
 import { UserData, LoginForm, SignupForm } from "@/lib/types/Auth";
 import { usePathname, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface AuthContextType {
   user: UserData | null;
@@ -68,17 +69,20 @@ export function AuthProvider({
   async function login(form: LoginForm) {
     const user = await AuthApi.login(form);
     setUser(user);
+    toast.success("Logged in successfullly");
   }
 
   async function signup(form: SignupForm) {
     const user = await AuthApi.signup(form);
     setUser(user);
+    toast.success("Account registered successfully");
   }
 
   async function logout() {
     await AuthApi.logout();
     setUser(null);
-    router.push("/login")
+    router.push("/login");
+    toast.success("Logged out successfully");
   }
 
   return (

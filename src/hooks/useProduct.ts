@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ProductApi } from "@/lib/api/ProductApi";
 import { ProductData, ProductForm } from "@/lib/types/Product";
+import toast from "react-hot-toast";
 
 export function useProduct() {
   const [products, setProducts] = useState<ProductData[]>([]);
@@ -23,6 +24,7 @@ export function useProduct() {
   const addProduct = async (form: ProductForm) => {
     const created = await ProductApi.add(form);
     setProducts((prev) => [...prev, created]);
+    toast.success("Product added successfully");
   };
 
   const updateProduct = async (id: number, form: ProductForm) => {
@@ -30,6 +32,7 @@ export function useProduct() {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? updated : p))
     );
+    toast.success("Product updated successfully");
   };
 
   return {

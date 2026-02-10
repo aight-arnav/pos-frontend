@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ClientData, ClientForm } from "@/lib/types/Client";
 import { ClientApi } from "@/lib/api/ClientApi";
+import toast from "react-hot-toast";
 
 export function useClients() {
   const [clients, setClients] = useState<ClientData[]>([]);
@@ -11,6 +12,7 @@ export function useClients() {
   const addClient = async (form: ClientForm) => {
     const client = await ClientApi.add(form);
     setClients((prev) => [...prev, client]);
+    toast.success("Client added successfully");
   };
 
   const updateClient = async (id: number, form: ClientForm) => {
@@ -18,6 +20,7 @@ export function useClients() {
     setClients((prev) =>
       prev.map((c) => (c.id === id ? updated : c))
     );
+    toast.success("Client updated successfully");
   };
 
   useEffect(() => {

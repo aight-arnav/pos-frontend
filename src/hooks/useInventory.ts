@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { InventoryApi } from "@/lib/api/InventoryApi";
 import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
+import toast from "react-hot-toast";
 
 export function useInventory() {
   const [inventory, setInventory] = useState<InventoryData[]>([]);
@@ -24,6 +25,7 @@ export function useInventory() {
     await InventoryApi.uploadTsv(file);
     const inventoryAfterUpdation = await InventoryApi.getAll();
     setInventory(inventoryAfterUpdation);
+    toast.success("Inventory updated successfully");
   };
 
   const updateInventory = async (
@@ -36,6 +38,7 @@ export function useInventory() {
         item.productId === productId ? updated : item
       )
     );
+    toast.success("Inventory updated successfully");
   };
 
   return {

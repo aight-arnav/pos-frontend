@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { OrderItemForm, OrderForm } from "@/lib/types/Order";
 import { OrderApi } from "@/lib/api/OrderApi";
+import toast from "react-hot-toast";
 
 export function useOrderCreation() {
   const [items, setItems] = useState<OrderItemForm[]>([]);
@@ -30,6 +31,8 @@ export function useOrderCreation() {
           : i
       )
     );
+
+    toast.success("Item updated successfully");
   }
 
   function removeItem(barcode: string) {
@@ -47,6 +50,8 @@ export function useOrderCreation() {
     } finally {
       setLoading(false);
     }
+
+    toast.success("Item removed successfully");
   }
 
   return {
