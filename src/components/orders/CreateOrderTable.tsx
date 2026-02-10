@@ -193,7 +193,20 @@ export function CreateOrderTable({
                           commitEdit("quantity");
                         if (e.key === "Escape") setEditing(null);
                       }}
-                      className="h-9 bg-transparent border-0 px-0 text-sm shadow-none focus:outline-none focus:ring-0"
+                      className="
+                        h-9
+                        bg-transparent
+                        border-0
+                        pl-9
+                        text-xl
+                        shadow-none
+                        focus:outline-none
+                        focus:ring-0
+                        focus:border-0
+                        focus-visible:outline-none
+                        focus-visible:ring-0
+                        focus-visible:border-0
+                      "
                     />
                   ) : (
                     item.barcode
@@ -221,7 +234,20 @@ export function CreateOrderTable({
                           commitEdit("price");
                         if (e.key === "Escape") setEditing(null);
                       }}
-                      className="h-9 bg-transparent border-0 px-0 text-sm text-right shadow-none focus:outline-none focus:ring-0"
+                      className="
+                        h-9
+                        bg-transparent
+                        border-0
+                        pl-9
+                        text-xl
+                        shadow-none
+                        focus:outline-none
+                        focus:ring-0
+                        focus:border-0
+                        focus-visible:outline-none
+                        focus-visible:ring-0
+                        focus-visible:border-0
+                      "
                     />
                   ) : (
                     item.quantity
@@ -253,7 +279,20 @@ export function CreateOrderTable({
                           commitEdit("done");
                         if (e.key === "Escape") setEditing(null);
                       }}
-                      className="h-9 bg-transparent border-0 px-0 text-sm text-right shadow-none focus:outline-none focus:ring-0"
+                      className="
+                        h-9
+                        bg-transparent
+                        border-0
+                        pl-9
+                        text-xl
+                        shadow-none
+                        focus:outline-none
+                        focus:ring-0
+                        focus:border-0
+                        focus-visible:outline-none
+                        focus-visible:ring-0
+                        focus-visible:border-0
+                      "
                     />
                   ) : (
                     item.sellingPrice
@@ -292,7 +331,20 @@ export function CreateOrderTable({
                   if (e.key === "Enter")
                     setActiveDraftField("quantity");
                 }}
-                className="h-9 bg-transparent border-0 px-0 text-sm shadow-none focus:outline-none focus:ring-0"
+                className="
+                  h-9
+                  bg-transparent
+                  border-0
+                  pl-9
+                  text-xl
+                  shadow-none
+                  focus:outline-none
+                  focus:ring-0
+                  focus:border-0
+                  focus-visible:outline-none
+                  focus-visible:ring-0
+                  focus-visible:border-0
+                "
               />
             </TableCell>
 
@@ -313,7 +365,20 @@ export function CreateOrderTable({
                     if (e.key === "Enter")
                       setActiveDraftField("sellingPrice");
                   }}
-                  className="h-9 bg-transparent border-0 px-0 text-sm text-right shadow-none focus:outline-none focus:ring-0"
+                  className="
+                    h-9
+                    bg-transparent
+                    border-0
+                    pl-9
+                    text-xl
+                    shadow-none
+                    focus:outline-none
+                    focus:ring-0
+                    focus:border-0
+                    focus-visible:outline-none
+                    focus-visible:ring-0
+                    focus-visible:border-0
+                  "
                 />
               ) : (
                 draft.quantity
@@ -336,7 +401,20 @@ export function CreateOrderTable({
                   onKeyDown={(e) => {
                     if (e.key === "Enter") commitDraft();
                   }}
-                  className="h-9 bg-transparent border-0 px-0 text-sm text-right shadow-none focus:outline-none focus:ring-0"
+                  className="
+                    h-9
+                    bg-transparent
+                    border-0
+                    pl-9
+                    text-xl
+                    shadow-none
+                    focus:outline-none
+                    focus:ring-0
+                    focus:border-0
+                    focus-visible:outline-none
+                    focus-visible:ring-0
+                    focus-visible:border-0
+                  "
                 />
               ) : (
                 draft.sellingPrice
