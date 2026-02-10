@@ -14,17 +14,17 @@ const TrimLongField = ({ value, viewLength = 50 }: Props) => {
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <span className="cursor-help">
-          {truncate(value, viewLength)}
-        </span>
-      </TooltipTrigger>
+        <TooltipTrigger asChild>
+            <span className={isTrimmed ? "cursor-help" : ""}>
+            {truncate(value, viewLength)}
+            </span>
+        </TooltipTrigger>
 
-      {isTrimmed && (
-        <TooltipContent className="max-w-md wrap-break-word">
-          {value}
-        </TooltipContent>
-      )}
+        {isTrimmed && (
+            <TooltipContent className="max-w-md wrap-break-word">
+            {value}
+            </TooltipContent>
+        )}
     </Tooltip>
   );
 };
