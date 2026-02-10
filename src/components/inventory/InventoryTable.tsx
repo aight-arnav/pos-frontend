@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
 import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
-import { InventoryFormDialog } from "./InventoryFormDialog";
+import { InventoryFormDialog } from "@/components/inventory/InventoryFormDialog";
+import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
+import { Pencil } from "lucide-react";
 
 interface Props {
   inventory: InventoryData[];
@@ -27,7 +29,8 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
     {
       key: "quantity",
       label: "Quantity",
-      align: "right",
+      align: "center",
+      render: (row) => `${row.quantity} units`,
     },
     {
       key: "actions",
@@ -35,10 +38,18 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
       align: "right",
       render: (row) => (
         <InventoryFormDialog
-          triggerLabel="Edit"
           initialData={row}
           onSubmit={(form) =>
             onUpdate(row.productId, form)
+          }
+          trigger={
+            <OutlineButton
+              size="sm"
+              className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
+            >
+              <Pencil className="mr-1 h-4 w-4" />
+              Edit
+            </OutlineButton>
           }
         />
       ),
@@ -53,7 +64,7 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
         page * pageSize
       )}
       loading={loading}
-      rowKey={"productId"}
+      rowKey="productId"
       searchPlaceholder="Search inventory..."
       pagination={{
         total: inventory.length,
