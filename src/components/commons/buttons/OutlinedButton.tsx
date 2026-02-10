@@ -8,7 +8,10 @@ export function OutlineButton({
   return (
     <Button
       variant="outline"
-      className={cn("border-gray-300", className)}
+      className={cn(
+        "border-gray-300 text-zinc-700 hover:border-blue-800 hover:text-blue-900",
+        className
+      )}
       {...props}
     />
   );

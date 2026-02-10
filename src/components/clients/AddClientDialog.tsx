@@ -1,4 +1,3 @@
-// components/clients/AddClientDialog.tsx
 "use client";
 
 import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
@@ -14,7 +13,8 @@ export function AddClientDialog() {
       onSubmit={addClient}
       trigger={
         <PrimaryButton className="gap-2 shadow-sm">
-          <Plus className="w-4 h-4" /> Add Client
+          <Plus className="h-4 w-4" />
+          Add Client
         </PrimaryButton>
       }
     />

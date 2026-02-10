@@ -5,7 +5,7 @@ import { ClientData } from "@/lib/types/Client";
 import { ClientFormDialog } from "@/components/clients/ClientFormDialog";
 import { Pencil } from "lucide-react";
 import { useClients } from "@/hooks/useClients";
-import { OutlineButton } from "../commons/buttons/OutlinedButton";
+import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { useState } from "react";
 
 export function ClientTable() {
@@ -18,7 +18,7 @@ export function ClientTable() {
     {
       key: "serial",
       label: "S.No",
-      render: (_, idx) => (page - 1) * pageSize + idx + 1, // ✅ pagination-safe
+      render: (_, idx) => (page - 1) * pageSize + idx + 1,
     },
     {
       key: "clientName",
@@ -47,7 +47,7 @@ export function ClientTable() {
           trigger={
             <OutlineButton
               size="sm"
-              className="rounded-sm px-3 text-zinc-600 hover:text-zinc-900"
+              className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
             >
               <Pencil className="mr-1 h-4 w-4" />
               Edit
@@ -63,10 +63,10 @@ export function ClientTable() {
       columns={columns}
       data={clients.slice((page - 1) * pageSize, page * pageSize)}
       loading={loading}
-      rowKey="id" // ✅ FIX
+      rowKey="id"
       searchPlaceholder="Search clients..."
       pagination={{
-        total: clients.length || 60, // fallback ok for now
+        total: clients.length || 60,
         page,
         pageSize,
         onPageChange: setPage,

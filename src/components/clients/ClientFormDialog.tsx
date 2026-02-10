@@ -33,9 +33,7 @@ export function ClientFormDialog({ trigger, initialData, onSubmit }: Props) {
     try {
       await onSubmit({ clientName });
       setIsOpen(false);
-      if (!isEdit) setClientName(""); // Reset if it's a new entry
-    } catch (error) {
-      console.error("Failed to save client:", error);
+      if (!isEdit) setClientName("");
     } finally {
       setIsSubmitting(false);
     }
@@ -45,9 +43,9 @@ export function ClientFormDialog({ trigger, initialData, onSubmit }: Props) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className="sm:max-w-md border-none shadow-2xl">
+      <DialogContent className="sm:max-w-md border border-stone-200 shadow-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-gray-900">
+          <DialogTitle className="text-xl font-bold text-blue-900">
             {isEdit ? "Edit Client" : "Add New Client"}
           </DialogTitle>
         </DialogHeader>
@@ -62,29 +60,39 @@ export function ClientFormDialog({ trigger, initialData, onSubmit }: Props) {
               onChange={(e) => setClientName(e.target.value)}
               maxLength={50}
               placeholder="e.g. Acme Corp"
-              className="focus-visible:ring-green-600 border-gray-200"
+              className="border-gray-200 "
             />
             <div className="flex justify-between">
-              <p className="text-xs text-gray-400">Unique identifier for the client</p>
-              <p className="text-xs text-gray-400">{clientName.length}/50</p>
+              <p className="text-xs text-gray-400">
+                Unique identifier for the client
+              </p>
+              <p className="text-xs text-gray-400">
+                {clientName.length}/50
+              </p>
             </div>
           </div>
 
           <div className="flex justify-end gap-3">
-            <OutlineButton 
-              type="button" 
+            <OutlineButton
+              type="button"
               onClick={() => setIsOpen(false)}
               disabled={isSubmitting}
             >
               Cancel
             </OutlineButton>
 
-            <PrimaryButton 
+            <PrimaryButton
               onClick={handleSubmit}
               disabled={clientName.trim().length === 0 || isSubmitting}
-              className="min-w-25"
+              className="min-w-30"
             >
-              {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (isEdit ? "Update" : "Create Client")}
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isEdit ? (
+                "Update"
+              ) : (
+                "Create Client"
+              )}
             </PrimaryButton>
           </div>
         </div>
