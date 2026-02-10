@@ -7,6 +7,7 @@ import { Pencil } from "lucide-react";
 import { useClients } from "@/hooks/useClients";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { useState } from "react";
+import TrimLongField from "../commons/TrimLongField";
 
 export function ClientTable() {
   const { clients, loading, updateClient } = useClients();
@@ -23,6 +24,7 @@ export function ClientTable() {
     {
       key: "clientName",
       label: "Client Name",
+      render: (row) => <TrimLongField viewLength={30} value={row.clientName} />,
     },
     {
       key: "createdAt",

@@ -6,6 +6,7 @@ import { ProductData, ProductForm } from "@/lib/types/Product";
 import { ProductFormDialog } from "@/components/products/ProductFormDialog";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
+import TrimLongField from "../commons/TrimLongField";
 
 interface Props {
   products: ProductData[];
@@ -21,6 +22,7 @@ export function ProductTable({ products, loading, onUpdate }: Props) {
     {
       key: "productName",
       label: "Product",
+      render: (row) => <TrimLongField viewLength={50} value={row.productName} />,
     },
     {
       key: "barcode",
@@ -34,7 +36,7 @@ export function ProductTable({ products, loading, onUpdate }: Props) {
     {
       key: "clientId",
       label: "Client",
-      align: "center"
+      align: "center",
     },
     {
       key: "actions",

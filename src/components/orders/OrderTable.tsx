@@ -7,6 +7,7 @@ import { formatIST } from "@/lib/utils/date";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { FileText } from "lucide-react";
 import { useOrders } from "@/hooks/useOrders";
+import TrimLongField from "../commons/TrimLongField";
 
 interface Props {
   orders: OrderData[];
@@ -78,7 +79,7 @@ export function OrderTable({ orders, loading }: Props) {
                   className="flex justify-between text-sm"
                 >
                   <span className="text-gray-800">
-                    {item.productName}
+                    <TrimLongField viewLength={50} value={item.productName} />,
                   </span>
                   <span className="text-gray-500">
                     {item.quantity} × ₹{item.sellingPrice}

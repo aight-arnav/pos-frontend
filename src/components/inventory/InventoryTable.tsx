@@ -6,6 +6,7 @@ import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
 import { InventoryFormDialog } from "@/components/inventory/InventoryFormDialog";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
+import TrimLongField from "../commons/TrimLongField";
 
 interface Props {
   inventory: InventoryData[];
@@ -21,6 +22,7 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
     {
       key: "productName",
       label: "Product",
+      render: (row) => <TrimLongField viewLength={50} value={row.productName} />,
     },
     {
       key: "barcode",
