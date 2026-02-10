@@ -31,9 +31,7 @@ type EditingCell = {
 } | null;
 
 type DraftField = "barcode" | "quantity" | "sellingPrice";
-
 type EditingField = NonNullable<EditingCell>["field"];
-
 
 export function CreateOrderTable({
   items,
@@ -99,21 +97,16 @@ export function CreateOrderTable({
     if (!item) return;
 
     const updatedBarcode =
-      editing.field === "barcode"
-        ? String(editValue)
-        : item.barcode;
+      editing.field === "barcode" ? String(editValue) : item.barcode;
 
     const updatedQty =
-      editing.field === "quantity"
-        ? Number(editValue)
-        : item.quantity;
+      editing.field === "quantity" ? Number(editValue) : item.quantity;
 
     const updatedPrice =
       editing.field === "sellingPrice"
         ? Number(editValue)
         : item.sellingPrice;
 
-    // Remove old item if barcode changed
     if (updatedBarcode !== item.barcode) {
       onRemove(item.barcode);
     }
@@ -136,188 +129,211 @@ export function CreateOrderTable({
     setActiveDraftField("barcode");
   }
 
+  const isEditing = (barcode: string, field: EditingField) =>
+    editing?.barcode === barcode && editing?.field === field;
+
+  /* ---------- Shared cell input styles ---------- */
+
+  const cellInputBase = `
+    w-full
+    bg-transparent
+    border-0
+    p-0
+    text-sm
+    focus:outline-none
+    focus:ring-0
+    focus-visible:outline-none
+    focus-visible:ring-0
+  `;
+
   return (
     <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
-      <Table>
+      <Table className="table-fixed">
         <TableHeader className="bg-zinc-50">
           <TableRow>
-            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 w-[40%]">
               Barcode
             </TableHead>
-            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 text-right">
+            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 text-right w-[15%]">
               Qty
             </TableHead>
-            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 text-right">
+            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 text-right w-[15%]">
               Price
             </TableHead>
-            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 text-right">
+            <TableHead className="px-6 py-3 text-xs font-medium uppercase tracking-wide text-zinc-500 text-right w-[20%]">
               Total
             </TableHead>
-            <TableHead className="w-10" />
+            <TableHead className="w-[10%]" />
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {items.map((item) => {
-            const editingBarcode =
-              editing?.barcode === item.barcode &&
-              editing?.field === "barcode";
-
-            const editingQty =
-              editing?.barcode === item.barcode &&
-              editing?.field === "quantity";
-
-            const editingPrice =
-              editing?.barcode === item.barcode &&
-              editing?.field === "sellingPrice";
-
-            return (
-              <TableRow
-                key={item.barcode}
-                className="transition-colors hover:bg-zinc-50"
+          {items.map((item) => (
+            <TableRow
+              key={item.barcode}
+              className="hover:bg-zinc-50"
+            >
+              {/* Barcode */}
+              <TableCell
+                className="px-6 py-4 cursor-pointer"
+                onClick={() =>
+                  startEdit(item.barcode, "barcode", item.barcode)
+                }
               >
-                {/* Barcode */}
-                <TableCell
-                  className="px-6 py-4 text-sm cursor-pointer"
-                  onClick={() =>
-                    startEdit(item.barcode, "barcode", item.barcode)
+                <Input
+                  ref={
+                    isEditing(item.barcode, "barcode") ? editRef : undefined
                   }
-                >
-                  {editingBarcode ? (
-                    <Input
-                      ref={editRef}
-                      value={String(editValue)}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter")
-                          commitEdit("quantity");
-                        if (e.key === "Escape") setEditing(null);
-                      }}
-                      className="
-                        h-9
-                        bg-transparent
-                        border-0
-                        pl-9
-                        text-xl
-                        shadow-none
-                        focus:outline-none
-                        focus:ring-0
-                        focus:border-0
-                        focus-visible:outline-none
-                        focus-visible:ring-0
-                        focus-visible:border-0
-                      "
-                    />
-                  ) : (
-                    item.barcode
-                  )}
-                </TableCell>
+                  value={
+                    isEditing(item.barcode, "barcode")
+                      ? String(editValue)
+                      : item.barcode
+                  }
+                  readOnly={!isEditing(item.barcode, "barcode")}
+                  tabIndex={isEditing(item.barcode, "barcode") ? 0 : -1}
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") commitEdit("quantity");
+                    if (e.key === "Escape") setEditing(null);
+                  }}
+                  className={`
+                    ${cellInputBase}
+                    text-left
+                    truncate
+                    shadow-none
+                    pl-0
+                    focus:outline-none
+                    focus:ring-0
+                    focus:border-0
+                    focus-visible:outline-none
+                    focus-visible:ring-0
+                    focus-visible:border-0
+                    ${
+                      !isEditing(item.barcode, "barcode") &&
+                      "pointer-events-none"
+                    }
+                  `}
+                />
+              </TableCell>
 
-                {/* Qty */}
-                <TableCell
-                  className="px-6 py-4 text-sm text-right cursor-pointer"
-                  onClick={() =>
-                    startEdit(item.barcode, "quantity", item.quantity)
+              {/* Qty */}
+              <TableCell
+                className="px-6 py-4 text-right cursor-pointer"
+                onClick={() =>
+                  startEdit(item.barcode, "quantity", item.quantity)
+                }
+              >
+                <Input
+                  ref={
+                    isEditing(item.barcode, "quantity") ? editRef : undefined
                   }
-                >
-                  {editingQty ? (
-                    <Input
-                      ref={editRef}
-                      type="number"
-                      min={1}
-                      value={Number(editValue)}
-                      onChange={(e) =>
-                        setEditValue(Number(e.target.value))
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter")
-                          commitEdit("price");
-                        if (e.key === "Escape") setEditing(null);
-                      }}
-                      className="
-                        h-9
-                        bg-transparent
-                        border-0
-                        pl-9
-                        text-xl
-                        shadow-none
-                        focus:outline-none
-                        focus:ring-0
-                        focus:border-0
-                        focus-visible:outline-none
-                        focus-visible:ring-0
-                        focus-visible:border-0
-                      "
-                    />
-                  ) : (
-                    item.quantity
-                  )}
-                </TableCell>
+                  type="number"
+                  value={
+                    isEditing(item.barcode, "quantity")
+                      ? Number(editValue)
+                      : item.quantity
+                  }
+                  readOnly={!isEditing(item.barcode, "quantity")}
+                  tabIndex={isEditing(item.barcode, "quantity") ? 0 : -1}
+                  onChange={(e) =>
+                    setEditValue(Number(e.target.value))
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") commitEdit("price");
+                    if (e.key === "Escape") setEditing(null);
+                  }}
+                  className={`
+                    ${cellInputBase}
+                    text-right
+                    tabular-nums
+                    truncate
+                    shadow-none
+                    focus:outline-none
+                    focus:ring-0
+                    focus:border-0
+                    focus-visible:outline-none
+                    focus-visible:ring-0
+                    focus-visible:border-0
+                    ${
+                      !isEditing(item.barcode, "quantity") &&
+                      "pointer-events-none"
+                    }
+                  `}
+                />
+              </TableCell>
 
-                {/* Price */}
-                <TableCell
-                  className="px-6 py-4 text-sm text-right cursor-pointer"
-                  onClick={() =>
-                    startEdit(
-                      item.barcode,
-                      "sellingPrice",
-                      item.sellingPrice
-                    )
-                  }
-                >
-                  {editingPrice ? (
-                    <Input
-                      ref={editRef}
-                      type="number"
-                      min={0}
-                      value={Number(editValue)}
-                      onChange={(e) =>
-                        setEditValue(Number(e.target.value))
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter")
-                          commitEdit("done");
-                        if (e.key === "Escape") setEditing(null);
-                      }}
-                      className="
-                        h-9
-                        bg-transparent
-                        border-0
-                        pl-9
-                        text-xl
-                        shadow-none
-                        focus:outline-none
-                        focus:ring-0
-                        focus:border-0
-                        focus-visible:outline-none
-                        focus-visible:ring-0
-                        focus-visible:border-0
-                      "
-                    />
-                  ) : (
+              {/* Price */}
+              <TableCell
+                className="px-6 py-4 text-right cursor-pointer"
+                onClick={() =>
+                  startEdit(
+                    item.barcode,
+                    "sellingPrice",
                     item.sellingPrice
-                  )}
-                </TableCell>
+                  )
+                }
+              >
+                <Input
+                  ref={
+                    isEditing(item.barcode, "sellingPrice")
+                      ? editRef
+                      : undefined
+                  }
+                  type="number"
+                  value={
+                    isEditing(item.barcode, "sellingPrice")
+                      ? Number(editValue)
+                      : item.sellingPrice
+                  }
+                  readOnly={!isEditing(item.barcode, "sellingPrice")}
+                  tabIndex={
+                    isEditing(item.barcode, "sellingPrice") ? 0 : -1
+                  }
+                  onChange={(e) =>
+                    setEditValue(Number(e.target.value))
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") commitEdit("done");
+                    if (e.key === "Escape") setEditing(null);
+                  }}
+                  className={`
+                    ${cellInputBase}
+                    text-right
+                    tabular-nums
+                    truncate
+                    shadow-none
+                    focus:outline-none
+                    focus:ring-0
+                    focus:border-0
+                    focus-visible:outline-none
+                    focus-visible:ring-0
+                    focus-visible:border-0
+                    ${
+                      !isEditing(item.barcode, "sellingPrice") &&
+                      "pointer-events-none"
+                    }
+                  `}
+                />
+              </TableCell>
 
-                <TableCell className="px-6 py-4 text-sm text-right font-medium">
-                  {(item.quantity * item.sellingPrice).toFixed(2)}
-                </TableCell>
+              <TableCell className="px-6 py-4 text-sm text-right font-medium tabular-nums">
+                {(item.quantity * item.sellingPrice).toFixed(2)}
+              </TableCell>
 
-                <TableCell className="px-6 py-4 text-right">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8 rounded-sm"
-                    onClick={() => onRemove(item.barcode)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+              <TableCell className="px-6 py-4 text-right">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={() => onRemove(item.barcode)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
 
-          {/* Draft row (unchanged) */}
+          {/* Draft row (unchanged visually) */}
           <TableRow className="bg-zinc-50/70">
             <TableCell className="px-6 py-4">
               <Input
@@ -335,7 +351,6 @@ export function CreateOrderTable({
                   h-9
                   bg-transparent
                   border-0
-                  pl-9
                   text-xl
                   shadow-none
                   focus:outline-none
@@ -369,8 +384,9 @@ export function CreateOrderTable({
                     h-9
                     bg-transparent
                     border-0
-                    pl-9
+                    text-right
                     text-xl
+                    pr-0
                     shadow-none
                     focus:outline-none
                     focus:ring-0
@@ -378,6 +394,7 @@ export function CreateOrderTable({
                     focus-visible:outline-none
                     focus-visible:ring-0
                     focus-visible:border-0
+                    no-spinner
                   "
                 />
               ) : (
@@ -405,8 +422,9 @@ export function CreateOrderTable({
                     h-9
                     bg-transparent
                     border-0
-                    pl-9
+                    text-right
                     text-xl
+                    pr-0
                     shadow-none
                     focus:outline-none
                     focus:ring-0
@@ -414,6 +432,7 @@ export function CreateOrderTable({
                     focus-visible:outline-none
                     focus-visible:ring-0
                     focus-visible:border-0
+                    no-spinner
                   "
                 />
               ) : (
