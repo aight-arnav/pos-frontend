@@ -29,13 +29,12 @@ export function ProductTable({ products, loading, onUpdate }: Props) {
     {
       key: "mrp",
       label: "MRP",
-      align: "right",
       render: (row) => `₹ ${row.mrp.toFixed(2)}`,
     },
     {
       key: "clientId",
       label: "Client",
-      align: "right",
+      align: "center"
     },
     {
       key: "actions",
