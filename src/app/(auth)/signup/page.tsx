@@ -39,7 +39,7 @@ export default function SignupPage() {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1">
               <Label>Email</Label>
               <Input
@@ -66,7 +66,7 @@ export default function SignupPage() {
             >
               {loading ? "Creating account…" : "Sign up"}
             </PrimaryButton>
-          </div>
+          </form>
 
           <div className="text-center text-sm text-muted-foreground">
             Already have an account?{" "}

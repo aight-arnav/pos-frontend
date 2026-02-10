@@ -28,7 +28,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 to-gray-100">
       <Card className="w-full max-w-md shadow-lg border border-gray-200">
         <CardContent className="p-8 space-y-6">
           <div className="text-center space-y-1">
@@ -38,11 +38,11 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <div className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1">
               <Label>Email</Label>
               <Input
-                placeholder="you@example.com"
+                placeholder="johndoe@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -65,7 +65,7 @@ export default function LoginPage() {
             >
               {loading ? "Logging in…" : "Login"}
             </PrimaryButton>
-          </div>
+          </form>
 
           <div className="text-center text-sm text-muted-foreground">
             Don’t have an account?{" "}
