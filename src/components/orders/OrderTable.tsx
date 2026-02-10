@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
 import { OrderData } from "@/lib/types/Order";
-import { OrderDetailsDialog } from "./OrderDetailsDialog";
 import { formatIST } from "@/lib/utils/date";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
-import { Eye } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useOrders } from "@/hooks/useOrders";
 
 interface Props {
@@ -26,11 +25,6 @@ export function OrderTable({ orders, loading }: Props) {
       render: (row) => `#${row.id}`,
     },
     {
-      key: "items",
-      label: "Items",
-      render: () => "—", // placeholder until backend provides count
-    },
-    {
       key: "createdAt",
       label: "Created At",
       render: (row) => formatIST(row.createdAt),
@@ -42,9 +36,11 @@ export function OrderTable({ orders, loading }: Props) {
       render: (row) => (
         <OutlineButton
           size="sm"
+          className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
           onClick={() => generateInvoice(row.id)}
         >
-          Invoice
+          <FileText className="mr-1 h-4 w-4" />
+          Download Invoice
         </OutlineButton>
       ),
     },
@@ -70,8 +66,8 @@ export function OrderTable({ orders, loading }: Props) {
       }}
       expandable={{
         renderExpandedRow: (order) => (
-          <div className="rounded-lg border bg-white p-4">
-            <div className="mb-2 text-sm font-medium text-muted-foreground">
+          <div className="rounded-lg border border-stone-200 bg-white p-4">
+            <div className="mb-3 text-sm font-semibold text-gray-700">
               Order Items
             </div>
 
@@ -81,8 +77,10 @@ export function OrderTable({ orders, loading }: Props) {
                   key={idx}
                   className="flex justify-between text-sm"
                 >
-                  <span>{item.productName}</span>
-                  <span className="text-muted-foreground">
+                  <span className="text-gray-800">
+                    {item.productName}
+                  </span>
+                  <span className="text-gray-500">
                     {item.quantity} × ₹{item.sellingPrice}
                   </span>
                 </div>
