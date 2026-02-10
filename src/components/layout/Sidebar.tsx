@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Sidebar,
   SidebarContent,
@@ -20,9 +19,8 @@ import {
   Package,
   Boxes,
   ShoppingCart,
+  NotebookPen,
   LogOut,
-  Moon,
-  Sparkles,
 } from "lucide-react";
 import clsx from "clsx";
 import { Button } from "@/components/ui/button";
@@ -34,35 +32,34 @@ const MAIN_ITEMS = [
   { label: "Products", href: "/products", icon: Package },
   { label: "Inventory", href: "/inventory", icon: Boxes },
   { label: "Orders", href: "/orders", icon: ShoppingCart },
-  { label: "Create order", href: "/orders/create", icon: ShoppingCart },
+  { label: "Create order", href: "/orders/create", icon: NotebookPen },
 ];
 
 export function SidebarApp() {
   const pathname = usePathname();
-  const router = useRouter();
   const { logout } = useAuth();
 
-  function handleLogout() {
-    logout();
-  }
-
   return (
-    <Sidebar className="bg-muted/40 border-r">
-      {/* Top brand */}
-      <div className="px-6 py-5 border-b font-semibold text-lg">
-        POS System
+    <Sidebar className="border-r bg-stone-50">
+      {/* Brand */}
+      <div className="px-6 py-5 border-b">
+        <div className="text-lg font-semibold tracking-tight text-zinc-900">
+          POS System
+        </div>
+        <p className="text-xs text-zinc-500">
+          Admin Dashboard
+        </p>
       </div>
 
       <SidebarContent>
-        {/* MAIN */}
         <SidebarGroup>
-          <SidebarGroupLabel className="px-4 text-xs tracking-wide text-muted-foreground">
+          <SidebarGroupLabel className="px-4 text-xs font-medium tracking-wide text-zinc-500">
             MAIN
           </SidebarGroupLabel>
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {MAIN_ITEMS.map(item => {
+              {MAIN_ITEMS.map((item) => {
                 const active = pathname === item.href;
                 const Icon = item.icon;
 
@@ -72,13 +69,26 @@ export function SidebarApp() {
                       <Link
                         href={item.href}
                         className={clsx(
-                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                          "group relative flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
                           active
-                            ? "bg-background shadow-sm font-medium"
-                            : "hover:bg-background/70"
+                            ? "bg-white font-medium text-zinc-900 shadow-sm"
+                            : "text-zinc-600 hover:bg-white hover:text-zinc-900"
                         )}
                       >
-                        <Icon className="h-4 w-4" />
+                        {/* Active indicator */}
+                        {active && (
+                          <span className="absolute left-0 top-1/2 h-4 w-1 -translate-y-1/2 rounded-r bg-blue-600" />
+                        )}
+
+                        <Icon
+                          className={clsx(
+                            "h-4 w-4 transition-colors",
+                            active
+                              ? "text-blue-600"
+                              : "text-zinc-400 group-hover:text-zinc-700"
+                          )}
+                        />
+
                         {item.label}
                       </Link>
                     </SidebarMenuButton>
@@ -91,11 +101,11 @@ export function SidebarApp() {
       </SidebarContent>
 
       {/* Footer */}
-      <SidebarFooter className="p-4 space-y-3">
+      <SidebarFooter className="border-t p-4">
         <Button
           variant="outline"
-          className="w-full flex items-center gap-2"
-          onClick={handleLogout}
+          className="w-full justify-start gap-2 text-zinc-700 hover:text-zinc-900"
+          onClick={logout}
         >
           <LogOut className="h-4 w-4" />
           Logout
