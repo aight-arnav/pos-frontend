@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,21 +9,27 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { ProductData, ProductForm } from "@/lib/types/Product";
+import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
+import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
+import { Loader2 } from "lucide-react";
 
 interface Props {
-  triggerLabel: string;
+  trigger: React.ReactNode;
   initialData?: ProductData;
   onSubmit: (form: ProductForm) => Promise<void>;
 }
 
 export function ProductFormDialog({
-  triggerLabel,
+  trigger,
   initialData,
   onSubmit,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const isEdit = Boolean(initialData);
 
   const [form, setForm] = useState<ProductForm>({
     clientId: initialData?.clientId ?? 0,
@@ -58,69 +63,114 @@ export function ProductFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant={initialData ? "outline" : "default"} size="sm">
-          {triggerLabel}
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className="sm:max-w-md border border-stone-200 shadow-2xl">
         <DialogHeader>
-          <DialogTitle>
-            {initialData ? "Edit Product" : "Add Product"}
+          <DialogTitle className="text-xl font-bold text-blue-900">
+            {isEdit ? "Edit Product" : "Add Product"}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <Input
-            placeholder="Client ID"
-            type="number"
-            value={form.clientId}
-            onChange={(e) =>
-              setForm({ ...form, clientId: Number(e.target.value) })
-            }
-          />
+        <div className="space-y-5 py-4">
+          {/* Client ID */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700">
+              Client ID
+            </Label>
+            <Input
+              type="number"
+              value={form.clientId}
+              onChange={(e) =>
+                setForm({ ...form, clientId: Number(e.target.value) })
+              }
+              className="border-gray-200"
+            />
+          </div>
 
-          <Input
-            placeholder="Barcode"
-            value={form.barcode}
-            onChange={(e) =>
-              setForm({ ...form, barcode: e.target.value })
-            }
-          />
+          {/* Barcode */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700">
+              Barcode
+            </Label>
+            <Input
+              value={form.barcode}
+              onChange={(e) =>
+                setForm({ ...form, barcode: e.target.value })
+              }
+              className="border-gray-200"
+            />
+          </div>
 
-          <Input
-            placeholder="Product name"
-            value={form.productName}
-            onChange={(e) =>
-              setForm({ ...form, productName: e.target.value })
-            }
-          />
+          {/* Product Name */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700">
+              Product Name
+            </Label>
+            <Input
+              value={form.productName}
+              onChange={(e) =>
+                setForm({ ...form, productName: e.target.value })
+              }
+              className="border-gray-200"
+            />
+          </div>
 
-          <Input
-            placeholder="MRP"
-            type="number"
-            value={form.mrp}
-            onChange={(e) =>
-              setForm({ ...form, mrp: Number(e.target.value) })
-            }
-          />
+          {/* MRP */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700">
+              MRP
+            </Label>
+            <Input
+              type="number"
+              value={form.mrp}
+              onChange={(e) =>
+                setForm({ ...form, mrp: Number(e.target.value) })
+              }
+              className="border-gray-200"
+            />
+          </div>
 
-          <Input
-            placeholder="Image URL (optional)"
-            value={form.imageUrl}
-            onChange={(e) =>
-              setForm({ ...form, imageUrl: e.target.value })
-            }
-          />
+          {/* Image URL */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold text-gray-700">
+              Image URL
+              <span className="ml-1 text-xs font-normal text-gray-400">
+                (optional)
+              </span>
+            </Label>
+            <Input
+              value={form.imageUrl}
+              onChange={(e) =>
+                setForm({ ...form, imageUrl: e.target.value })
+              }
+              className="border-gray-200"
+            />
+          </div>
 
-          <Button
-            className="w-full"
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {loading ? "Saving..." : "Save"}
-          </Button>
+          {/* Footer */}
+          <div className="flex justify-end gap-3 pt-2">
+            <OutlineButton
+              type="button"
+              onClick={() => setOpen(false)}
+              disabled={loading}
+            >
+              Cancel
+            </OutlineButton>
+
+            <PrimaryButton
+              onClick={handleSave}
+              disabled={loading}
+            >
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isEdit ? (
+                "Update"
+              ) : (
+                "Create Product"
+              )}
+            </PrimaryButton>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

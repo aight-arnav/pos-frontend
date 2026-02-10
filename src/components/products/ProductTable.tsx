@@ -4,6 +4,8 @@ import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
 import { ProductData, ProductForm } from "@/lib/types/Product";
 import { ProductFormDialog } from "@/components/products/ProductFormDialog";
+import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
+import { Pencil } from "lucide-react";
 
 interface Props {
   products: ProductData[];
@@ -41,9 +43,17 @@ export function ProductTable({ products, loading, onUpdate }: Props) {
       align: "right",
       render: (row) => (
         <ProductFormDialog
-          triggerLabel="Edit"
           initialData={row}
           onSubmit={(form) => onUpdate(row.id, form)}
+          trigger={
+            <OutlineButton
+              size="sm"
+              className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
+            >
+              <Pencil className="mr-1 h-4 w-4" />
+              Edit
+            </OutlineButton>
+          }
         />
       ),
     },
@@ -52,12 +62,9 @@ export function ProductTable({ products, loading, onUpdate }: Props) {
   return (
     <TableComponent
       columns={columns}
-      data={products.slice(
-        (page - 1) * pageSize,
-        page * pageSize
-      )}
+      data={products.slice((page - 1) * pageSize, page * pageSize)}
       loading={loading}
-      rowKey={"id"}
+      rowKey="id"
       searchPlaceholder="Search products..."
       pagination={{
         total: products.length,
