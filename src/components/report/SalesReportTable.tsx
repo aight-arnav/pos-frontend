@@ -22,6 +22,8 @@ export function SalesReportTable({ data, loading }: Props) {
       key: "clientId",
       label: "Client ID",
       align: "right",
+      render: (row) => 
+        row.clientId ? `${row.clientId}` : "All clients"
     },
     {
       key: "totalOrders",
@@ -48,7 +50,7 @@ export function SalesReportTable({ data, loading }: Props) {
         (page - 1) * pageSize,
         page * pageSize
       )}
-      rowKey={"date"}
+      rowKey="date"
       loading={loading}
       searchPlaceholder="Search report..."
       pagination={{
