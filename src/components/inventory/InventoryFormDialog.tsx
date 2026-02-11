@@ -14,6 +14,7 @@ import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
 import { Loader2 } from "lucide-react";
+import TrimLongField from "../commons/TrimLongField";
 
 interface Props {
   trigger: React.ReactNode;
@@ -58,7 +59,7 @@ export function InventoryFormDialog({
           {/* Product Context */}
           <div className="rounded-md border border-stone-200 bg-stone-50 p-3">
             <div className="text-sm font-semibold text-gray-800">
-              {initialData.productName}
+              <TrimLongField value={initialData.productName} viewLength={40} />
             </div>
             <div className="text-xs text-gray-500">
               Barcode: {initialData.barcode}
