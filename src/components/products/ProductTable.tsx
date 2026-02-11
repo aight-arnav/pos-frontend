@@ -2,21 +2,18 @@
 
 import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
-import { ProductData, ProductForm } from "@/lib/types/Product";
+import { ProductData } from "@/lib/types/Product";
 import { ProductFormDialog } from "@/components/products/ProductFormDialog";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
 import TrimLongField from "../commons/TrimLongField";
+import { useProduct } from "@/hooks/useProduct";
 
-interface Props {
-  products: ProductData[];
-  loading: boolean;
-  onUpdate: (id: number, form: ProductForm) => Promise<void>;
-}
-
-export function ProductTable({ products, loading, onUpdate }: Props) {
+export function ProductTable() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  const { products, loading, totalProducts, updateProduct } = useProduct(page, pageSize);
 
   const columns: Column<ProductData>[] = [
     {
@@ -45,7 +42,7 @@ export function ProductTable({ products, loading, onUpdate }: Props) {
       render: (row) => (
         <ProductFormDialog
           initialData={row}
-          onSubmit={(form) => onUpdate(row.id, form)}
+          onSubmit={(form) => updateProduct(row.id, form)}
           trigger={
             <OutlineButton
               size="sm"
@@ -63,12 +60,12 @@ export function ProductTable({ products, loading, onUpdate }: Props) {
   return (
     <TableComponent
       columns={columns}
-      data={products.slice((page - 1) * pageSize, page * pageSize)}
+      data={products}
       loading={loading}
       rowKey="id"
       searchPlaceholder="Search products..."
       pagination={{
-        total: products.length,
+        total: totalProducts,
         page,
         pageSize,
         onPageChange: setPage,

@@ -5,26 +5,28 @@ import { InventoryApi } from "@/lib/api/InventoryApi";
 import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
 import toast from "react-hot-toast";
 
-export function useInventory() {
+export function useInventory(page: number, pageSize: number) {
   const [inventory, setInventory] = useState<InventoryData[]>([]);
+  const [totalInventory, setTotalInventory] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await InventoryApi.getAll();
-        setInventory(data);
+        const data = await InventoryApi.getAll(page - 1, pageSize);
+        setInventory(data.content);
+        setTotalInventory(data.totalElements);
       } finally {
         setLoading(false);
       }
     }
     load();
-  }, []);
+  }, [page, pageSize]);
 
   const uploadTsv = async (file: File) => {
     await InventoryApi.uploadTsv(file);
-    const inventoryAfterUpdation = await InventoryApi.getAll();
-    setInventory(inventoryAfterUpdation);
+    const inventoryAfterUpdation = await InventoryApi.getAll(page - 1, pageSize);
+    setInventory(inventoryAfterUpdation.content);
     toast.success("Inventory updated successfully");
   };
 
@@ -43,6 +45,7 @@ export function useInventory() {
 
   return {
     inventory,
+    totalInventory,
     loading,
     uploadTsv,
     updateInventory,

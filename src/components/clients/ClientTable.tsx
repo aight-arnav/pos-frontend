@@ -10,10 +10,10 @@ import { useState } from "react";
 import TrimLongField from "../commons/TrimLongField";
 
 export function ClientTable() {
-  const { clients, loading, updateClient } = useClients();
-
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  
+  const { clients, totalClients, loading, updateClient } = useClients(page, pageSize);
 
   const columns: Column<ClientData>[] = [
     {
@@ -63,12 +63,12 @@ export function ClientTable() {
   return (
     <TableComponent
       columns={columns}
-      data={clients.slice((page - 1) * pageSize, page * pageSize)}
+      data={clients}
       loading={loading}
       rowKey="id"
       searchPlaceholder="Search clients..."
       pagination={{
-        total: clients.length || 60,
+        total: totalClients,
         page,
         pageSize,
         onPageChange: setPage,

@@ -1,9 +1,10 @@
 import { ProductData, ProductForm } from "@/lib/types/Product";
 import { ApiClient } from "./ApiClient";
+import { PagedResponse } from "../types/PagedResponse";
 
 export const ProductApi = {
   getAll: async (page: number = 0, size: number = 10) => {
-    const res = await ApiClient.get<ProductData[]>("/products", { params: { page, size }});
+    const res = await ApiClient.get<PagedResponse<ProductData>>("/products", { params: { page, size }});
     return res.data;
   },
 

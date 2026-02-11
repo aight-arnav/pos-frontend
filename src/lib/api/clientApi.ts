@@ -1,9 +1,10 @@
 import { ClientData, ClientForm } from "@/lib/types/Client";
 import { ApiClient } from "./ApiClient";
+import { PagedResponse } from "../types/PagedResponse";
 
 export const ClientApi = {
   getAll: async (page: number = 0, size: number = 10) => {
-    const res = await ApiClient.get<ClientData[]>("/clients", { params: { page, size } });
+    const res = await ApiClient.get<PagedResponse<ClientData>>("/clients", { params: { page, size } });
     return res.data;
   },  
 

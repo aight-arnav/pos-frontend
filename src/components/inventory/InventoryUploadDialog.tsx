@@ -13,11 +13,11 @@ import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { UploadCloud, FileText, Loader2 } from "lucide-react";
 
-interface Props {
-  onUpload: (file: File) => Promise<void>;
-}
-
-export function InventoryUploadDialog({ onUpload }: Props) {
+export function InventoryUploadDialog({
+  uploadTsv,
+}: {
+  uploadTsv: (file: File) => Promise<void>;
+}) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -27,7 +27,7 @@ export function InventoryUploadDialog({ onUpload }: Props) {
 
     setLoading(true);
     try {
-      await onUpload(file);
+      await uploadTsv(file);
       setFile(null);
       setOpen(false);
     } finally {
@@ -55,7 +55,6 @@ export function InventoryUploadDialog({ onUpload }: Props) {
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Instructions */}
           <div className="rounded-md border border-stone-200 bg-stone-50 p-3 text-sm">
             <p className="font-semibold text-gray-700 mb-1">
               Required columns
@@ -66,7 +65,6 @@ export function InventoryUploadDialog({ onUpload }: Props) {
             </ul>
           </div>
 
-          {/* Upload Box */}
           <label
             htmlFor="inventory-upload"
             className="group flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white px-6 py-10 text-center transition hover:border-blue-400 hover:bg-blue-50"
@@ -99,7 +97,6 @@ export function InventoryUploadDialog({ onUpload }: Props) {
             />
           </label>
 
-          {/* Actions */}
           <div className="flex justify-end gap-3">
             <OutlineButton
               type="button"

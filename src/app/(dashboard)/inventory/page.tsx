@@ -1,16 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { InventoryTable } from "@/components/inventory/InventoryTable";
 import { InventoryUploadDialog } from "@/components/inventory/InventoryUploadDialog";
 import { useInventory } from "@/hooks/useInventory";
 
 export default function InventoryPage() {
-  const { inventory, loading, uploadTsv, updateInventory } = useInventory();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const inventoryState = useInventory(page, pageSize);
 
   return (
     <div className="min-h-screen bg-stone-100 px-6 py-8">
       <div className="mx-auto max-w-7xl space-y-8">
-        {/* Header Section */}
         <div className="flex items-end justify-between border-b border-stone-200 pb-4">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight text-blue-900">
@@ -21,15 +24,18 @@ export default function InventoryPage() {
             </p>
           </div>
 
-          <InventoryUploadDialog onUpload={uploadTsv} />
+          <InventoryUploadDialog
+            uploadTsv={inventoryState.uploadTsv}
+          />
         </div>
 
-        {/* Table Container */}
         <div className="overflow-hidden">
           <InventoryTable
-            inventory={inventory}
-            loading={loading}
-            onUpdate={updateInventory}
+            {...inventoryState}
+            page={page}
+            pageSize={pageSize}
+            setPage={setPage}
+            setPageSize={setPageSize}
           />
         </div>
       </div>

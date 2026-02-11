@@ -5,8 +5,9 @@ import { ClientData, ClientForm } from "@/lib/types/Client";
 import { ClientApi } from "@/lib/api/ClientApi";
 import toast from "react-hot-toast";
 
-export function useClients() {
+export function useClients(page: number, pageSize: number) {
   const [clients, setClients] = useState<ClientData[]>([]);
+  const [totalClients, setTotalClients] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const addClient = async (form: ClientForm) => {
@@ -28,9 +29,10 @@ export function useClients() {
 
     async function loadClients() {
       try {
-        const data = await ClientApi.getAll();
+        const data = await ClientApi.getAll(page - 1, pageSize);
         if (!cancelled) {
-          setClients(data);
+          setClients(data.content);
+          setTotalClients(data.totalElements);
         }
       } finally {
         if (!cancelled) {
@@ -44,10 +46,11 @@ export function useClients() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [page, pageSize]);
 
   return {
     clients,
+    totalClients,
     loading,
     addClient,
     updateClient,

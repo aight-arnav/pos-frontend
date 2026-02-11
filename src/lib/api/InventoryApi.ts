@@ -2,10 +2,11 @@ import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
 import { ApiClient, MultipartApiClient } from "./ApiClient";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import { PagedResponse } from "../types/PagedResponse";
 
 export const InventoryApi = {
   getAll: async (page: number = 0, size: number = 10) => {
-    const res = await ApiClient.get<InventoryData[]>(
+    const res = await ApiClient.get<PagedResponse<InventoryData>>(
       "/inventory",
       { params: { page, size } }
     );
@@ -25,7 +26,7 @@ export const InventoryApi = {
     formData.append("file", file);
 
     try {
-      const res = await MultipartApiClient.post(
+      const res = await MultipartApiClient.post<PagedResponse<InventoryData>>(
         "/inventory/bulk",
         formData,
         { responseType: "json" }

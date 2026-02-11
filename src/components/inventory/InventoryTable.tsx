@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
 import { InventoryData, InventoryForm } from "@/lib/types/Inventory";
 import { InventoryFormDialog } from "@/components/inventory/InventoryFormDialog";
@@ -8,26 +7,34 @@ import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
 import TrimLongField from "../commons/TrimLongField";
 
-interface Props {
+export function InventoryTable({
+  inventory,
+  totalInventory,
+  loading,
+  updateInventory,
+  page,
+  pageSize,
+  setPage,
+  setPageSize,
+}: {
   inventory: InventoryData[];
+  totalInventory: number;
   loading: boolean;
-  onUpdate: (productId: number, form: InventoryForm) => Promise<void>;
-}
-
-export function InventoryTable({ inventory, loading, onUpdate }: Props) {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-
+  updateInventory: (productId: number, form: InventoryForm) => Promise<void>;
+  page: number;
+  pageSize: number;
+  setPage: (p: number) => void;
+  setPageSize: (s: number) => void;
+}) {
   const columns: Column<InventoryData>[] = [
     {
       key: "productName",
       label: "Product",
-      render: (row) => <TrimLongField viewLength={50} value={row.productName} />,
+      render: (row) => (
+        <TrimLongField viewLength={50} value={row.productName} />
+      ),
     },
-    {
-      key: "barcode",
-      label: "Barcode",
-    },
+    { key: "barcode", label: "Barcode" },
     {
       key: "quantity",
       label: "Quantity",
@@ -42,7 +49,7 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
         <InventoryFormDialog
           initialData={row}
           onSubmit={(form) =>
-            onUpdate(row.productId, form)
+            updateInventory(row.productId, form)
           }
           trigger={
             <OutlineButton
@@ -61,15 +68,12 @@ export function InventoryTable({ inventory, loading, onUpdate }: Props) {
   return (
     <TableComponent
       columns={columns}
-      data={inventory.slice(
-        (page - 1) * pageSize,
-        page * pageSize
-      )}
+      data={inventory}
       loading={loading}
       rowKey="productId"
       searchPlaceholder="Search inventory..."
       pagination={{
-        total: inventory.length,
+        total: totalInventory,
         page,
         pageSize,
         onPageChange: setPage,

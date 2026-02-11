@@ -9,15 +9,10 @@ import { FileText } from "lucide-react";
 import { useOrders } from "@/hooks/useOrders";
 import TrimLongField from "../commons/TrimLongField";
 
-interface Props {
-  orders: OrderData[];
-  loading: boolean;
-}
-
-export function OrderTable({ orders, loading }: Props) {
+export function OrderTable() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const { generateInvoice } = useOrders();
+  const { orders, totalOrders, ordersLoading, generateInvoice } = useOrders(page, pageSize);
 
   const columns: Column<OrderData>[] = [
     {
@@ -50,12 +45,12 @@ export function OrderTable({ orders, loading }: Props) {
   return (
     <TableComponent
       columns={columns}
-      data={orders.slice((page - 1) * pageSize, page * pageSize)}
-      loading={loading}
+      data={orders}
+      loading={ordersLoading}
       rowKey="id"
       searchPlaceholder="Search orders..."
       pagination={{
-        total: orders.length || 50,
+        total: totalOrders,
         page,
         pageSize,
         label: "orders",
