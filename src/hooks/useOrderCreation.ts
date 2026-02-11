@@ -32,11 +32,11 @@ export function useOrderCreation() {
       )
     );
 
-    toast.success("Item updated successfully");
   }
 
   function removeItem(barcode: string) {
     setItems(prev => prev.filter(i => i.barcode !== barcode));
+    toast.success("Item removed successfully");
   }
 
   async function submitOrder() {
@@ -51,7 +51,7 @@ export function useOrderCreation() {
       setLoading(false);
     }
 
-    toast.success("Item removed successfully");
+    toast.success("Order placed successfully");
   }
 
   return {
