@@ -13,7 +13,7 @@ export function ClientTable() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   
-  const { clients, totalClients, loading, updateClient } = useClients(page, pageSize);
+  const { clients, totalClients, loading, updateClient, searchClients } = useClients(page, pageSize);
 
   const columns: Column<ClientData>[] = [
     {
@@ -67,6 +67,10 @@ export function ClientTable() {
       loading={loading}
       rowKey="id"
       searchPlaceholder="Search clients..."
+      onSearch={(value) => {
+        setPage(1);
+        searchClients(value);
+      }}
       pagination={{
         total: totalClients,
         page,

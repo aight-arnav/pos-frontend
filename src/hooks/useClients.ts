@@ -10,6 +10,17 @@ export function useClients(page: number, pageSize: number) {
   const [totalClients, setTotalClients] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const [searchString, setSearchString] = useState("");
+  const [debouncedString, setDebouncedString] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedString(searchString);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchString]);
+
   const addClient = async (form: ClientForm) => {
     const client = await ClientApi.add(form);
     setClients((prev) => [...prev, client]);
@@ -24,12 +35,22 @@ export function useClients(page: number, pageSize: number) {
     toast.success("Client updated successfully");
   };
 
+  const searchClients = (value: string) => {
+    setSearchString(value);
+  };
+
   useEffect(() => {
     let cancelled = false;
 
+    const fetchClients = async () => {
+    return debouncedString.trim().length > 0
+      ? await ClientApi.search(debouncedString, page - 1, pageSize)
+      : await ClientApi.getAll(page - 1, pageSize);;
+  }
+
     async function loadClients() {
       try {
-        const data = await ClientApi.getAll(page - 1, pageSize);
+        const data = await fetchClients();
         if (!cancelled) {
           setClients(data.content);
           setTotalClients(data.totalElements);
@@ -46,7 +67,7 @@ export function useClients(page: number, pageSize: number) {
     return () => {
       cancelled = true;
     };
-  }, [page, pageSize]);
+  }, [page, pageSize, debouncedString]);
 
   return {
     clients,
@@ -54,5 +75,6 @@ export function useClients(page: number, pageSize: number) {
     loading,
     addClient,
     updateClient,
+    searchClients
   };
 }

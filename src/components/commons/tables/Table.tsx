@@ -57,6 +57,7 @@ interface TableProps<T> {
   rowKey: keyof T;
   loading?: boolean;
   searchPlaceholder?: string;
+  onSearch?: (value: string) => void;
   pagination?: {
     total: number;
     page: number;
@@ -78,6 +79,7 @@ export function TableComponent<T>({
   rowKey,
   loading,
   searchPlaceholder,
+  onSearch,
   pagination,
   expandable,
 }: TableProps<T>) {
@@ -107,6 +109,7 @@ export function TableComponent<T>({
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
           <Input
+            onChange={(e) => onSearch?.(e.target.value)}
             placeholder={searchPlaceholder ?? "Search..."}
             className="
               h-9

@@ -21,5 +21,10 @@ export const ClientApi = {
   update: async (id: number, form: ClientForm) => {
     const res = await ApiClient.put<ClientData>(`/clients/${id}`, form);
     return res.data;
+  },
+
+  search: async (name: string, page: number = 0, size: number = 10) => {
+    const res = await ApiClient.get<PagedResponse<ClientData>>("/clients/search", { params: { name, page, size } });
+    return res.data;
   }
 };
