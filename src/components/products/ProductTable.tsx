@@ -6,6 +6,7 @@ import { ProductFormDialog } from "@/components/products/ProductFormDialog";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
 import TrimLongField from "../commons/TrimLongField";
+import Image from "next/image";
 
 interface Props {
   products: ProductData[];
@@ -32,6 +33,25 @@ export function ProductTable({
 }: Props) {
   const columns: Column<ProductData>[] = [
     {
+      key: "image",
+      label: "Image",
+      align: "center",
+      render: (row) =>
+        row.imageUrl ? (
+          <Image
+            src={row.imageUrl}
+            alt={row.productName}
+            height={50}
+            width={50}
+            className="h-12 w-12 rounded-md object-cover border border-stone-200"
+          />
+        ) : (
+          <div className="h-12 w-12 rounded-md bg-stone-100 flex items-center justify-center text-xs text-gray-400">
+            N/A
+          </div>
+        ),
+    },
+    {
       key: "productName",
       label: "Product",
       render: (row) => <TrimLongField viewLength={50} value={row.productName} />,
@@ -42,7 +62,7 @@ export function ProductTable({
       label: "MRP",
       render: (row) => `₹ ${row.mrp.toFixed(2)}`,
     },
-    { key: "clientId", label: "Client", align: "center" },
+    { key: "clientName", label: "Client", align: "center" },
     {
       key: "actions",
       label: "Actions",
