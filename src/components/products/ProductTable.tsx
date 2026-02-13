@@ -44,6 +44,8 @@ export function ProductTable({
             height={50}
             width={50}
             className="h-12 w-12 rounded-md object-cover border border-stone-200"
+            unoptimized
+            // remove this later
           />
         ) : (
           <div className="h-12 w-12 rounded-md bg-stone-100 flex items-center justify-center text-xs text-gray-400">
