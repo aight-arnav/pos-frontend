@@ -56,7 +56,7 @@ export function OrderTable({
       data={orders}
       loading={loading}
       rowKey="id"
-      searchPlaceholder="Search orders..."
+      searchPlaceholder="Search order by id..."
       onSearch={(value) => {
         setPage(1);
         searchOrder(value);
