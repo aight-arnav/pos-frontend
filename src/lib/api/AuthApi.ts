@@ -20,8 +20,8 @@ export const AuthApi = {
     await ApiClient.post("/auth/logout");
   },
 
-  me: async () => {
-    const res = await ApiClient.get<UserData>("/auth/me");
+  verify: async () => {
+    const res = await ApiClient.get<UserData>("/auth/verify");
     return res.data;
   },
 };

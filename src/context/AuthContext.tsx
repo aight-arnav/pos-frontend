@@ -38,7 +38,7 @@ export function AuthProvider({
   useEffect(() => {
     async function loadMe() {
       try {
-        const me = await AuthApi.me();
+        const me = await AuthApi.verify();
         setUser(me);
       } catch {
         setUser(null);
