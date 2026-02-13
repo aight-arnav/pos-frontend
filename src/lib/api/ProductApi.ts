@@ -16,5 +16,10 @@ export const ProductApi = {
   update: async (id: number, form: ProductForm) => {
     const res = await ApiClient.put<ProductData>(`/products/${id}`, form);
     return res.data;
-  }
+  },
+
+  search: async (barcode: string, page: number = 0, size: number = 10) => {
+    const res = await ApiClient.get<PagedResponse<ProductData>>("/products/search", { params: { barcode, page, size }});
+    return res.data;
+  },
 };

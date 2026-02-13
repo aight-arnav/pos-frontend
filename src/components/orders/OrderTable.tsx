@@ -1,30 +1,38 @@
 "use client";
 
-import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
 import { OrderData } from "@/lib/types/Order";
-import { formatIST } from "@/lib/utils/date";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { FileText } from "lucide-react";
-import { useOrders } from "@/hooks/useOrders";
+import { formatIST } from "@/lib/utils/date";
 import TrimLongField from "../commons/TrimLongField";
 
-export function OrderTable() {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const { orders, totalOrders, ordersLoading, generateInvoice } = useOrders(page, pageSize);
+interface Props {
+  orders: OrderData[];
+  totalOrders: number;
+  loading: boolean;
+  page: number;
+  pageSize: number;
+  setPage: (p: number) => void;
+  setPageSize: (s: number) => void;
+  generateInvoice: (orderId: number) => void;
+  searchOrder: (query: string) => void;
+}
 
+export function OrderTable({
+  orders,
+  totalOrders,
+  loading,
+  page,
+  pageSize,
+  setPage,
+  setPageSize,
+  generateInvoice,
+  searchOrder,
+}: Props) {
   const columns: Column<OrderData>[] = [
-    {
-      key: "id",
-      label: "Order ID",
-      render: (row) => `#${row.id}`,
-    },
-    {
-      key: "createdAt",
-      label: "Created At",
-      render: (row) => formatIST(row.createdAt),
-    },
+    { key: "id", label: "Order ID", render: (row) => `#${row.id}` },
+    { key: "createdAt", label: "Created At", render: (row) => formatIST(row.createdAt) },
     {
       key: "actions",
       label: "Actions",
@@ -46,14 +54,17 @@ export function OrderTable() {
     <TableComponent
       columns={columns}
       data={orders}
-      loading={ordersLoading}
+      loading={loading}
       rowKey="id"
       searchPlaceholder="Search orders..."
+      onSearch={(value) => {
+        setPage(1);
+        searchOrder(value);
+      }}
       pagination={{
         total: totalOrders,
         page,
         pageSize,
-        label: "orders",
         onPageChange: setPage,
         onPageSizeChange: (size) => {
           setPageSize(size);
@@ -63,18 +74,12 @@ export function OrderTable() {
       expandable={{
         renderExpandedRow: (order) => (
           <div className="rounded-lg border border-stone-200 bg-white p-4">
-            <div className="mb-3 text-sm font-semibold text-gray-700">
-              Order Items
-            </div>
-
+            <div className="mb-3 text-sm font-semibold text-gray-700">Order Items</div>
             <div className="space-y-2">
               {order.orderItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex justify-between text-sm"
-                >
+                <div key={idx} className="flex justify-between text-sm">
                   <span className="text-gray-800">
-                    <TrimLongField viewLength={50} value={item.productName} />,
+                    <TrimLongField viewLength={50} value={item.productName} />
                   </span>
                   <span className="text-gray-500">
                     {item.quantity} × ₹{item.sellingPrice}

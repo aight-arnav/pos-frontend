@@ -2,15 +2,17 @@
 
 import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
 import { ClientFormDialog } from "@/components/clients/ClientFormDialog";
-import { useClients } from "@/hooks/useClients";
+import { ClientForm } from "@/lib/types/Client";
 import { Plus } from "lucide-react";
 
-export function AddClientDialog() {
-  const { addClient } = useClients();
+interface Props {
+  addClient: (form: ClientForm) => Promise<void>;
+}
 
+export function AddClientDialog({ addClient }: Props) {
   return (
     <ClientFormDialog
-      onSubmit={addClient}
+      onSubmit={async (form) => await addClient(form)}
       trigger={
         <PrimaryButton className="gap-2 shadow-sm">
           <Plus className="h-4 w-4" />

@@ -10,35 +10,54 @@ export function useInventory(page: number, pageSize: number) {
   const [totalInventory, setTotalInventory] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const [searchString, setSearchString] = useState("");
+  const [debouncedString, setDebouncedString] = useState("");
+
   useEffect(() => {
-    async function load() {
+    const timer = setTimeout(() => setDebouncedString(searchString), 400);
+    return () => clearTimeout(timer);
+  }, [searchString]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadInventory() {
+      setLoading(true);
       try {
-        const data = await InventoryApi.getAll(page - 1, pageSize);
-        setInventory(data.content);
-        setTotalInventory(data.totalElements);
+        const data =
+          debouncedString.trim().length > 0
+            ? await InventoryApi.search(debouncedString, page - 1, pageSize)
+            : await InventoryApi.getAll(page - 1, pageSize);
+
+        if (!cancelled) {
+          setInventory(data.content);
+          setTotalInventory(data.totalElements);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
-    load();
-  }, [page, pageSize]);
 
-  const uploadTsv = async (file: File) => {
+    loadInventory();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [page, pageSize, debouncedString]);
+
+  const searchInventory = (value: string) => setSearchString(value);
+
+  const uploadTsv = async (file: File): Promise<void> => {
     await InventoryApi.uploadTsv(file);
-    const inventoryAfterUpdation = await InventoryApi.getAll(page - 1, pageSize);
-    setInventory(inventoryAfterUpdation.content);
+    const updated = await InventoryApi.getAll(page - 1, pageSize);
+    setInventory(updated.content);
     toast.success("Inventory updated successfully");
   };
 
-  const updateInventory = async (
-    productId: number,
-    form: InventoryForm
-  ) => {
+  const updateInventory = async (productId: number, form: InventoryForm): Promise<void> => {
     const updated = await InventoryApi.update(productId, form);
     setInventory(prev =>
-      prev.map(item =>
-        item.productId === productId ? updated : item
-      )
+      prev.map(item => (item.productId === productId ? updated : item))
     );
     toast.success("Inventory updated successfully");
   };
@@ -47,6 +66,7 @@ export function useInventory(page: number, pageSize: number) {
     inventory,
     totalInventory,
     loading,
+    searchInventory,
     uploadTsv,
     updateInventory,
   };

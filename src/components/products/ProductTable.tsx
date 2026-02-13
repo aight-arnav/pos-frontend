@@ -1,40 +1,48 @@
 "use client";
 
-import { useState } from "react";
 import { TableComponent, Column } from "@/components/commons/tables/Table";
-import { ProductData } from "@/lib/types/Product";
+import { ProductData, ProductForm } from "@/lib/types/Product";
 import { ProductFormDialog } from "@/components/products/ProductFormDialog";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
 import TrimLongField from "../commons/TrimLongField";
-import { useProduct } from "@/hooks/useProduct";
 
-export function ProductTable() {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+interface Props {
+  products: ProductData[];
+  totalProducts: number;
+  loading: boolean;
+  page: number;
+  pageSize: number;
+  setPage: (p: number) => void;
+  setPageSize: (s: number) => void;
+  updateProduct: (id: number, form: ProductForm) => Promise<void>;
+  searchProducts: (query: string) => void;
+}
 
-  const { products, loading, totalProducts, updateProduct } = useProduct(page, pageSize);
-
+export function ProductTable({
+  products,
+  totalProducts,
+  loading,
+  page,
+  pageSize,
+  setPage,
+  setPageSize,
+  updateProduct,
+  searchProducts,
+}: Props) {
   const columns: Column<ProductData>[] = [
     {
       key: "productName",
       label: "Product",
       render: (row) => <TrimLongField viewLength={50} value={row.productName} />,
     },
-    {
-      key: "barcode",
-      label: "Barcode",
-    },
+    { key: "barcode", label: "Barcode" },
     {
       key: "mrp",
       label: "MRP",
       render: (row) => `₹ ${row.mrp.toFixed(2)}`,
     },
-    {
-      key: "clientId",
-      label: "Client",
-      align: "center",
-    },
+    { key: "clientId", label: "Client", align: "center" },
     {
       key: "actions",
       label: "Actions",
@@ -42,7 +50,7 @@ export function ProductTable() {
       render: (row) => (
         <ProductFormDialog
           initialData={row}
-          onSubmit={(form) => updateProduct(row.id, form)}
+          onSubmit={async (form) => await updateProduct(row.id, form)}
           trigger={
             <OutlineButton
               size="sm"
@@ -63,7 +71,11 @@ export function ProductTable() {
       data={products}
       loading={loading}
       rowKey="id"
-      searchPlaceholder="Search products..."
+      searchPlaceholder="Search products by barcode..."
+      onSearch={(value) => {
+        setPage(1);
+        searchProducts(value);
+      }}
       pagination={{
         total: totalProducts,
         page,

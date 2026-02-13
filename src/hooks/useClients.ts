@@ -14,51 +14,41 @@ export function useClients(page: number, pageSize: number) {
   const [debouncedString, setDebouncedString] = useState("");
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedString(searchString);
-    }, 400);
-
+    const timer = setTimeout(() => setDebouncedString(searchString), 400);
     return () => clearTimeout(timer);
   }, [searchString]);
 
-  const addClient = async (form: ClientForm) => {
+  const addClient = async (form: ClientForm): Promise<void> => {
     const client = await ClientApi.add(form);
     setClients((prev) => [...prev, client]);
     toast.success("Client added successfully");
   };
 
-  const updateClient = async (id: number, form: ClientForm) => {
+  const updateClient = async (id: number, form: ClientForm): Promise<void> => {
     const updated = await ClientApi.update(id, form);
-    setClients((prev) =>
-      prev.map((c) => (c.id === id ? updated : c))
-    );
+    setClients((prev) => prev.map((c) => (c.id === id ? updated : c)));
     toast.success("Client updated successfully");
   };
 
-  const searchClients = (value: string) => {
-    setSearchString(value);
-  };
+  const searchClients = (value: string) => setSearchString(value);
 
   useEffect(() => {
     let cancelled = false;
 
-    const fetchClients = async () => {
-    return debouncedString.trim().length > 0
-      ? await ClientApi.search(debouncedString, page - 1, pageSize)
-      : await ClientApi.getAll(page - 1, pageSize);;
-  }
-
     async function loadClients() {
+      setLoading(true);
       try {
-        const data = await fetchClients();
+        const data =
+          debouncedString.trim().length > 0
+            ? await ClientApi.search(debouncedString, page - 1, pageSize)
+            : await ClientApi.getAll(page - 1, pageSize);
+
         if (!cancelled) {
           setClients(data.content);
           setTotalClients(data.totalElements);
         }
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     }
 
@@ -75,6 +65,6 @@ export function useClients(page: number, pageSize: number) {
     loading,
     addClient,
     updateClient,
-    searchClients
+    searchClients,
   };
 }

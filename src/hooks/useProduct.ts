@@ -10,32 +10,56 @@ export function useProduct(page: number, pageSize: number) {
   const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  const [searchString, setSearchString] = useState("");
+  const [debouncedString, setDebouncedString] = useState("");
+
+  // debounce search
   useEffect(() => {
-    async function load() {
+    const timer = setTimeout(() => setDebouncedString(searchString), 400);
+    return () => clearTimeout(timer);
+  }, [searchString]);
+
+  // fetch products
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      setLoading(true);
       try {
-        const data = await ProductApi.getAll(page - 1, pageSize);
-        setProducts(data.content);
-        setTotalProducts(data.totalElements);
+        const data =
+          debouncedString.trim().length > 0
+            ? await ProductApi.search(debouncedString, page - 1, pageSize)
+            : await ProductApi.getAll(page - 1, pageSize);
+
+        if (!cancelled) {
+          setProducts(data.content);
+          setTotalProducts(data.totalElements);
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
-    load();
-  }, [page, pageSize]);
 
-  const addProduct = async (form: ProductForm) => {
+    loadProducts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [page, pageSize, debouncedString]);
+
+  const addProduct = async (form: ProductForm): Promise<void> => {
     const created = await ProductApi.add(form);
     setProducts((prev) => [...prev, created]);
     toast.success("Product added successfully");
   };
 
-  const updateProduct = async (id: number, form: ProductForm) => {
+  const updateProduct = async (id: number, form: ProductForm): Promise<void> => {
     const updated = await ProductApi.update(id, form);
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? updated : p))
-    );
+    setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
     toast.success("Product updated successfully");
   };
+
+  const searchProducts = (value: string) => setSearchString(value);
 
   return {
     products,
@@ -43,5 +67,6 @@ export function useProduct(page: number, pageSize: number) {
     loading,
     addProduct,
     updateProduct,
+    searchProducts,
   };
 }

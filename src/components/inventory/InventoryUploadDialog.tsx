@@ -13,11 +13,11 @@ import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { UploadCloud, FileText, Loader2 } from "lucide-react";
 
-export function InventoryUploadDialog({
-  uploadTsv,
-}: {
+interface Props {
   uploadTsv: (file: File) => Promise<void>;
-}) {
+}
+
+export function InventoryUploadDialog({ uploadTsv }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -26,6 +26,7 @@ export function InventoryUploadDialog({
     if (!file) return;
 
     setLoading(true);
+
     try {
       await uploadTsv(file);
       setFile(null);
@@ -56,9 +57,7 @@ export function InventoryUploadDialog({
 
         <div className="space-y-6 py-4">
           <div className="rounded-md border border-stone-200 bg-stone-50 p-3 text-sm">
-            <p className="font-semibold text-gray-700 mb-1">
-              Required columns
-            </p>
+            <p className="font-semibold text-gray-700 mb-1">Required columns</p>
             <ul className="list-disc list-inside text-gray-600">
               <li>barcode</li>
               <li>quantity</li>
@@ -74,11 +73,7 @@ export function InventoryUploadDialog({
             <p className="mt-3 text-sm font-medium text-gray-700">
               {file ? "File selected" : "Click to upload or drag & drop"}
             </p>
-
-            <p className="mt-1 text-xs text-gray-500">
-              TSV files only
-            </p>
-
+            <p className="mt-1 text-xs text-gray-500">TSV files only</p>
             {file && (
               <div className="mt-4 flex items-center gap-2 rounded-md bg-stone-100 px-3 py-1 text-sm text-gray-700">
                 <FileText className="h-4 w-4" />
@@ -91,30 +86,16 @@ export function InventoryUploadDialog({
               type="file"
               accept=".tsv"
               className="hidden"
-              onChange={(e) =>
-                setFile(e.target.files?.[0] ?? null)
-              }
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
           </label>
 
           <div className="flex justify-end gap-3">
-            <OutlineButton
-              type="button"
-              onClick={() => setOpen(false)}
-              disabled={loading}
-            >
+            <OutlineButton type="button" onClick={() => setOpen(false)} disabled={loading}>
               Cancel
             </OutlineButton>
-
-            <PrimaryButton
-              onClick={handleUpload}
-              disabled={!file || loading}
-            >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                "Upload Inventory"
-              )}
+            <PrimaryButton onClick={handleUpload} disabled={!file || loading}>
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Upload Inventory"}
             </PrimaryButton>
           </div>
         </div>

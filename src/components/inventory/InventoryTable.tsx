@@ -7,6 +7,18 @@ import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
 import TrimLongField from "../commons/TrimLongField";
 
+interface Props {
+  inventory: InventoryData[];
+  totalInventory: number;
+  loading: boolean;
+  updateInventory: (productId: number, form: InventoryForm) => Promise<void>;
+  page: number;
+  pageSize: number;
+  setPage: (p: number) => void;
+  setPageSize: (s: number) => void;
+  searchInventory: (query: string) => void;
+}
+
 export function InventoryTable({
   inventory,
   totalInventory,
@@ -16,23 +28,13 @@ export function InventoryTable({
   pageSize,
   setPage,
   setPageSize,
-}: {
-  inventory: InventoryData[];
-  totalInventory: number;
-  loading: boolean;
-  updateInventory: (productId: number, form: InventoryForm) => Promise<void>;
-  page: number;
-  pageSize: number;
-  setPage: (p: number) => void;
-  setPageSize: (s: number) => void;
-}) {
+  searchInventory,
+}: Props) {
   const columns: Column<InventoryData>[] = [
     {
       key: "productName",
       label: "Product",
-      render: (row) => (
-        <TrimLongField viewLength={50} value={row.productName} />
-      ),
+      render: (row) => <TrimLongField viewLength={50} value={row.productName} />,
     },
     { key: "barcode", label: "Barcode" },
     {
@@ -48,9 +50,7 @@ export function InventoryTable({
       render: (row) => (
         <InventoryFormDialog
           initialData={row}
-          onSubmit={(form) =>
-            updateInventory(row.productId, form)
-          }
+          onSubmit={async (form) => await updateInventory(row.productId, form)}
           trigger={
             <OutlineButton
               size="sm"
@@ -71,7 +71,11 @@ export function InventoryTable({
       data={inventory}
       loading={loading}
       rowKey="productId"
-      searchPlaceholder="Search inventory..."
+      searchPlaceholder="Search by product name..."
+      onSearch={(value) => {
+        setPage(1);
+        searchInventory(value);
+      }}
       pagination={{
         total: totalInventory,
         page,

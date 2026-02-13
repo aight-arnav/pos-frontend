@@ -1,20 +1,35 @@
 "use client";
 
 import { TableComponent, Column } from "@/components/commons/tables/Table";
-import { ClientData } from "@/lib/types/Client";
+import { ClientData, ClientForm } from "@/lib/types/Client";
 import { ClientFormDialog } from "@/components/clients/ClientFormDialog";
 import { Pencil } from "lucide-react";
-import { useClients } from "@/hooks/useClients";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
-import { useState } from "react";
-import TrimLongField from "../commons/TrimLongField";
+import TrimLongField from "@/components/commons/TrimLongField";
 
-export function ClientTable() {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  
-  const { clients, totalClients, loading, updateClient, searchClients } = useClients(page, pageSize);
+interface Props {
+  clients: ClientData[];
+  totalClients: number;
+  loading: boolean;
+  page: number;
+  pageSize: number;
+  setPage: (p: number) => void;
+  setPageSize: (s: number) => void;
+  updateClient: (id: number, form: ClientForm) => void;
+  searchClients: (query: string) => void;
+}
 
+export function ClientTable({
+  clients,
+  totalClients,
+  loading,
+  page,
+  pageSize,
+  setPage,
+  setPageSize,
+  updateClient,
+  searchClients,
+}: Props) {
   const columns: Column<ClientData>[] = [
     {
       key: "serial",
@@ -45,7 +60,7 @@ export function ClientTable() {
       render: (row) => (
         <ClientFormDialog
           initialData={row}
-          onSubmit={(form) => updateClient(row.id, form)}
+          onSubmit={async (form) => updateClient(row.id, form)}
           trigger={
             <OutlineButton
               size="sm"

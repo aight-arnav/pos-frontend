@@ -21,11 +21,7 @@ interface Props {
   onSubmit: (form: ProductForm) => Promise<void>;
 }
 
-export function ProductFormDialog({
-  trigger,
-  initialData,
-  onSubmit,
-}: Props) {
+export function ProductFormDialog({ trigger, initialData, onSubmit }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -64,7 +60,6 @@ export function ProductFormDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-
       <DialogContent className="sm:max-w-md border border-stone-200 shadow-2xl">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-blue-900">
@@ -75,9 +70,7 @@ export function ProductFormDialog({
         <div className="space-y-5 py-4">
           {/* Client ID */}
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-gray-700">
-              Client ID
-            </Label>
+            <Label className="text-sm font-semibold text-gray-700">Client ID</Label>
             <Input
               type="number"
               value={form.clientId}
@@ -90,43 +83,31 @@ export function ProductFormDialog({
 
           {/* Barcode */}
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-gray-700">
-              Barcode
-            </Label>
+            <Label className="text-sm font-semibold text-gray-700">Barcode</Label>
             <Input
               value={form.barcode}
-              onChange={(e) =>
-                setForm({ ...form, barcode: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, barcode: e.target.value })}
               className="border-gray-200"
             />
           </div>
 
           {/* Product Name */}
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-gray-700">
-              Product Name
-            </Label>
+            <Label className="text-sm font-semibold text-gray-700">Product Name</Label>
             <Input
               value={form.productName}
-              onChange={(e) =>
-                setForm({ ...form, productName: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, productName: e.target.value })}
               className="border-gray-200"
             />
           </div>
 
           {/* MRP */}
           <div className="space-y-2">
-            <Label className="text-sm font-semibold text-gray-700">
-              MRP
-            </Label>
+            <Label className="text-sm font-semibold text-gray-700">MRP</Label>
             <Input
               type="number"
               value={form.mrp}
-              onChange={(e) =>
-                setForm({ ...form, mrp: Number(e.target.value) })
-              }
+              onChange={(e) => setForm({ ...form, mrp: Number(e.target.value) })}
               className="border-gray-200"
             />
           </div>
@@ -134,41 +115,22 @@ export function ProductFormDialog({
           {/* Image URL */}
           <div className="space-y-2">
             <Label className="text-sm font-semibold text-gray-700">
-              Image URL
-              <span className="ml-1 text-xs font-normal text-gray-400">
-                (optional)
-              </span>
+              Image URL <span className="ml-1 text-xs font-normal text-gray-400">(optional)</span>
             </Label>
             <Input
               value={form.imageUrl}
-              onChange={(e) =>
-                setForm({ ...form, imageUrl: e.target.value })
-              }
+              onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
               className="border-gray-200"
             />
           </div>
 
           {/* Footer */}
           <div className="flex justify-end gap-3 pt-2">
-            <OutlineButton
-              type="button"
-              onClick={() => setOpen(false)}
-              disabled={loading}
-            >
+            <OutlineButton type="button" onClick={() => setOpen(false)} disabled={loading}>
               Cancel
             </OutlineButton>
-
-            <PrimaryButton
-              onClick={handleSave}
-              disabled={loading}
-            >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : isEdit ? (
-                "Update"
-              ) : (
-                "Create Product"
-              )}
+            <PrimaryButton onClick={handleSave} disabled={loading}>
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : isEdit ? "Update" : "Create Product"}
             </PrimaryButton>
           </div>
         </div>

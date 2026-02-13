@@ -3,59 +3,68 @@
 import { useEffect, useState } from "react";
 import { OrderApi } from "@/lib/api/OrderApi";
 import { OrderData } from "@/lib/types/Order";
+import { PagedResponse } from "@/lib/types/PagedResponse";
 import toast from "react-hot-toast";
 
 export function useOrders(page: number, pageSize: number) {
   const [orders, setOrders] = useState<OrderData[]>([]);
   const [totalOrders, setTotalOrders] = useState(0);
-  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [selectedOrder, setSelectedOrder] = useState<OrderData | null>(null);
-  const [selectedOrderLoading, setSelectedOrderLoading] = useState(false);
+  const [searchString, setSearchString] = useState("");
+  const [debouncedString, setDebouncedString] = useState("");
 
-  const [invoiceLoading, setInvoiceLoading] = useState(false);
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedString(searchString), 400);
+    return () => clearTimeout(timer);
+  }, [searchString]);
 
-  // Load all orders
+  // Load orders
   useEffect(() => {
     let alive = true;
 
     async function loadOrders() {
-      setOrdersLoading(true);
+      setLoading(true);
       try {
-        const data = await OrderApi.getAll(page - 1, pageSize);
-        if (alive) {
+        const id = Number(debouncedString.trim());
+        let data: PagedResponse<OrderData> | OrderData;
+
+        if (debouncedString && !isNaN(id)) {
+          data = await OrderApi.getById(id);
+        } else {
+          data = await OrderApi.getAll(page - 1, pageSize);
+        }
+
+        if (!alive) return;
+
+        if ("content" in data) {
           setOrders(data.content);
           setTotalOrders(data.totalElements);
+        } else {
+          setOrders([data]);
+          setTotalOrders(1);
         }
+      } catch (e: unknown) {
+        if (e instanceof Error) toast.error(e.message || "Failed to fetch orders");
       } finally {
-        if (alive) setOrdersLoading(false);
+        if (alive) setLoading(false);
       }
     }
 
     loadOrders();
+
     return () => {
       alive = false;
     };
-  }, [page, pageSize]);
-
-  // Fetch a single order by ID
-  async function fetchOrderById(orderId: number) {
-    setSelectedOrderLoading(true);
-    try {
-      const data = await OrderApi.getById(orderId);
-      setSelectedOrder(data);
-    } finally {
-      setSelectedOrderLoading(false);
-    }
-  }
+  }, [page, pageSize, debouncedString]);
 
   // Generate invoice
-  async function generateInvoice(orderId: number) {
-    setInvoiceLoading(true);
+  const generateInvoice = async (orderId: number) => {
     try {
       const blob = await OrderApi.generateInvoice(orderId);
       const url = window.URL.createObjectURL(blob);
-
+      
       const a = document.createElement("a");
       a.href = url;
       a.download = `invoice-order-${orderId}.pdf`;
@@ -63,20 +72,19 @@ export function useOrders(page: number, pageSize: number) {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-    } finally {
-      setInvoiceLoading(false);
+      toast.success("Invoice downloaded successfully");
+    } catch (e: unknown) {
+      if (e instanceof Error) toast.error(e.message || "Failed to generate invoice");
     }
-    toast.success("Invoice downloaded successfully");
-  }
+  };
+
+  const searchOrder = (value: string) => setSearchString(value);
 
   return {
     orders,
     totalOrders,
-    ordersLoading,
-    selectedOrder,
-    selectedOrderLoading,
-    invoiceLoading,
-    fetchOrderById,
+    ordersLoading: loading,
     generateInvoice,
+    searchOrder,
   };
 }

@@ -21,6 +21,11 @@ export const InventoryApi = {
     return res.data;
   },
 
+  search: async (productName: string, page: number = 0, size: number = 10) => {
+    const res = await ApiClient.get<PagedResponse<InventoryData>>("/inventory/search", { params: { productName, page, size }});
+    return res.data;
+  },
+
   uploadTsv: async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
