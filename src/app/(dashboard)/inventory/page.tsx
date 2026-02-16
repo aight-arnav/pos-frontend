@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { InventoryTable } from "@/components/inventory/InventoryTable";
 import { InventoryUploadDialog } from "@/components/inventory/InventoryUploadDialog";
+import { useAuth } from "@/context/AuthContext";
 import { useInventory } from "@/hooks/useInventory";
 
 export default function InventoryPage() {
@@ -11,6 +12,7 @@ export default function InventoryPage() {
 
   const { inventory, totalInventory, loading, searchInventory, uploadTsv, updateInventory } =
     useInventory(page, pageSize);
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-stone-100 px-6 py-8">
@@ -26,7 +28,9 @@ export default function InventoryPage() {
             </p>
           </div>
 
-          <InventoryUploadDialog uploadTsv={uploadTsv} />
+          {user?.role !== "OPERATOR" && (
+            <InventoryUploadDialog uploadTsv={uploadTsv} />
+          )}
         </div>
 
         {/* Table */}

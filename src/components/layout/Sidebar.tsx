@@ -37,7 +37,18 @@ const MAIN_ITEMS = [
 
 export function SidebarApp() {
   const pathname = usePathname();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  const items =
+    user?.role === "OPERATOR"
+      ? (() => {
+          const create = MAIN_ITEMS.find((i) => i.href === "/orders/create");
+          const others = MAIN_ITEMS.filter(
+            (i) => i.href !== "/dashboard" && i.href !== "/orders/create"
+          );
+          return create ? [create, ...others] : others;
+        })()
+      : MAIN_ITEMS;
 
   return (
     <Sidebar className="border-r bg-stone-50">
@@ -59,7 +70,7 @@ export function SidebarApp() {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {MAIN_ITEMS.map((item) => {
+              {items.map((item) => {
                 const active = pathname === item.href;
                 const Icon = item.icon;
 

@@ -6,6 +6,7 @@ import { useProduct } from "@/hooks/useProduct";
 import { PrimaryButton } from "@/components/commons/buttons/PrimaryButton";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProductsPage() {
   const [page, setPage] = useState(1);
@@ -13,6 +14,7 @@ export default function ProductsPage() {
 
   const { products, totalProducts, loading, addProduct, updateProduct, searchProducts } =
     useProduct(page, pageSize);
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-stone-100 px-6 py-8">
@@ -28,15 +30,17 @@ export default function ProductsPage() {
             </p>
           </div>
 
-          <ProductFormDialog
-            onSubmit={async (form) => await addProduct(form)}
-            trigger={
-              <PrimaryButton className="gap-2 shadow-sm">
-                <Plus className="h-4 w-4" />
-                Add Product
-              </PrimaryButton>
-            }
-          />
+          {user?.role !== "OPERATOR" && (
+            <ProductFormDialog
+              onSubmit={async (form) => await addProduct(form)}
+              trigger={
+                <PrimaryButton className="gap-2 shadow-sm">
+                  <Plus className="h-4 w-4" />
+                  Add Product
+                </PrimaryButton>
+              }
+            />
+          )}
         </div>
 
         {/* Table */}

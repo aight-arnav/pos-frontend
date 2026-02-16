@@ -3,6 +3,7 @@
 import { TableComponent, Column } from "@/components/commons/tables/Table";
 import { ClientData, ClientForm } from "@/lib/types/Client";
 import { ClientFormDialog } from "@/components/clients/ClientFormDialog";
+import { useAuth } from "@/context/AuthContext";
 import { Pencil } from "lucide-react";
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import TrimLongField from "@/components/commons/TrimLongField";
@@ -30,6 +31,7 @@ export function ClientTable({
   updateClient,
   searchClients,
 }: Props) {
+  const { user } = useAuth();
   const columns: Column<ClientData>[] = [
     {
       key: "serial",
@@ -57,21 +59,22 @@ export function ClientTable({
       key: "actions",
       label: "Actions",
       align: "right",
-      render: (row) => (
-        <ClientFormDialog
-          initialData={row}
-          onSubmit={async (form) => updateClient(row.id, form)}
-          trigger={
-            <OutlineButton
-              size="sm"
-              className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
-            >
-              <Pencil className="mr-1 h-4 w-4" />
-              Edit
-            </OutlineButton>
-          }
-        />
-      ),
+      render: (row) =>
+        user?.role === "OPERATOR" ? null : (
+          <ClientFormDialog
+            initialData={row}
+            onSubmit={async (form) => updateClient(row.id, form)}
+            trigger={
+              <OutlineButton
+                size="sm"
+                className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
+              >
+                <Pencil className="mr-1 h-4 w-4" />
+                Edit
+              </OutlineButton>
+            }
+          />
+        ),
     },
   ];
 

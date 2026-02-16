@@ -6,6 +6,7 @@ import { InventoryFormDialog } from "@/components/inventory/InventoryFormDialog"
 import { OutlineButton } from "@/components/commons/buttons/OutlinedButton";
 import { Pencil } from "lucide-react";
 import TrimLongField from "../commons/TrimLongField";
+import { useAuth } from "@/context/AuthContext";
 
 interface Props {
   inventory: InventoryData[];
@@ -30,6 +31,7 @@ export function InventoryTable({
   setPageSize,
   searchInventory,
 }: Props) {
+  const { user } = useAuth();
   const columns: Column<InventoryData>[] = [
     {
       key: "productName",
@@ -47,21 +49,22 @@ export function InventoryTable({
       key: "actions",
       label: "Actions",
       align: "right",
-      render: (row) => (
-        <InventoryFormDialog
-          initialData={row}
-          onSubmit={async (form) => await updateInventory(row.productId, form)}
-          trigger={
-            <OutlineButton
-              size="sm"
-              className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
-            >
-              <Pencil className="mr-1 h-4 w-4" />
-              Edit
-            </OutlineButton>
-          }
-        />
-      ),
+      render: (row) =>
+        user?.role === "OPERATOR" ? null : (
+          <InventoryFormDialog
+            initialData={row}
+            onSubmit={async (form) => await updateInventory(row.productId, form)}
+            trigger={
+              <OutlineButton
+                size="sm"
+                className="rounded-sm px-3 text-blue-800 hover:text-blue-900 hover:border-blue-900"
+              >
+                <Pencil className="mr-1 h-4 w-4" />
+                Edit
+              </OutlineButton>
+            }
+          />
+        ),
     },
   ];
 
