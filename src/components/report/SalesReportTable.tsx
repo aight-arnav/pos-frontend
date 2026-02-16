@@ -1,69 +1,104 @@
 "use client";
 
-import { useState } from "react";
 import { Column, TableComponent } from "@/components/commons/tables/Table";
-import { SalesReportData } from "@/lib/types/Report";
+import {
+  SalesReportData,
+  DaySalesData,
+  ProductSalesData,
+  ReportType,
+} from "@/lib/types/Report";
 
 interface Props {
   data: SalesReportData[];
   loading: boolean;
+  reportType: ReportType;
+  page: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
 }
 
-export function SalesReportTable({ data, loading }: Props) {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+export function SalesReportTable({
+  data,
+  loading,
+  reportType,
+  page,
+  pageSize,
+  total,
+  onPageChange,
+  onPageSizeChange,
+}: Props) {
 
-  const columns: Column<SalesReportData>[] = [
-    {
-      key: "date",
-      label: "Date",
-    },
-    {
-      key: "clientId",
-      label: "Client ID",
-      align: "right",
-      render: (row) => 
-        row.clientId ? `${row.clientId}` : "All clients"
-    },
-    {
-      key: "totalOrders",
-      label: "Orders",
-      align: "right",
-    },
-    {
-      key: "totalQuantity",
-      label: "Quantity",
-      align: "right",
-    },
-    {
-      key: "totalRevenue",
-      label: "Revenue",
-      align: "right",
-      render: (row) => `₹ ${row.totalRevenue.toFixed(2)}`,
-    },
-  ];
+  console.log(reportType);
+  
 
-  return (
-    <TableComponent
-      columns={columns}
-      data={data.slice(
-        (page - 1) * pageSize,
-        page * pageSize
-      )}
-      rowKey="date"
-      loading={loading}
-      searchPlaceholder="Search report..."
-      pagination={{
-        total: data.length,
-        page,
-        pageSize,
-        label: "rows",
-        onPageChange: setPage,
-        onPageSizeChange: (size) => {
-          setPageSize(size);
-          setPage(1);
-        },
-      }}
-    />
-  );
+  const safeData = Array.isArray(data) ? data : [];
+
+  if (reportType === "DAY") {
+    const dayData = safeData as DaySalesData[];
+
+    const columns: Column<DaySalesData>[] = [
+      { key: "date", label: "Date" },
+      { key: "numberOfOrders", label: "Orders", align: "right" },
+      { key: "itemsSold", label: "Items Sold", align: "right" },
+      {
+        key: "revenue",
+        label: "Revenue",
+        align: "right",
+        render: (row) => `₹ ${row.revenue.toFixed(2)}`,
+      },
+    ];
+
+    return (
+      <TableComponent
+        columns={columns}
+        data={dayData}
+        rowKey="date"
+        loading={loading}
+        pagination={{
+          total,
+          page,
+          pageSize,
+          onPageChange,
+          onPageSizeChange: (size) => {
+            onPageSizeChange(size);
+            onPageChange(1);
+          },
+        }}
+      />
+    );
+  } else {
+    const productData = safeData as ProductSalesData[];
+  
+    const columns: Column<ProductSalesData>[] = [
+      { key: "productName", label: "Product" },
+      { key: "quantitySold", label: "Quantity", align: "right" },
+      {
+        key: "revenue",
+        label: "Revenue",
+        align: "right",
+        render: (row) => `₹ ${row.revenue.toFixed(2)}`,
+      },
+    ];
+  
+    return (
+      <TableComponent
+        columns={columns}
+        data={productData}
+        rowKey="productName"
+        loading={loading}
+        pagination={{
+          total,
+          page,
+          pageSize,
+          onPageChange,
+          onPageSizeChange: (size) => {
+            onPageSizeChange(size);
+            onPageChange(1);
+          },
+        }}
+      />
+    );
+  }
 }

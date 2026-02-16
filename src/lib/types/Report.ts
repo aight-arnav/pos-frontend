@@ -1,14 +1,47 @@
+export type ReportType = "DAY" | "PRODUCT";
+
 export interface SalesReportForm {
-  startDate: string; // yyyy-mm-dd
+  startDate: string;
   endDate: string;
-  clientId?: number;
+  clientName?: string;
+  reportType: ReportType;
 }
 
-export interface SalesReportData {
-  date: string; // yyyy-mm-dd
-  clientId: number;
+/* ----------- DAY REPORT ----------- */
 
+export interface DaySalesData {
+  date: string;
+  numberOfOrders: number;
+  itemsSold: number;
+  revenue: number;
+}
+
+export interface DaySalesStatData {
+  totalDays: number;
   totalOrders: number;
-  totalQuantity: number;
+  totalItemsSold: number;
+  totalRevenue: number;
+  avgDailyRevenue: number;
+}
+
+/* ----------- PRODUCT REPORT ----------- */
+
+export interface ProductSalesData {
+  productName: string;
+  quantitySold: number;
+  revenue: number;
+}
+
+export interface ProductSalesStatData {
+  totalProducts: number;
+  totalQuantitySold: number;
   totalRevenue: number;
 }
+
+/* ----------- RESPONSE UNION ----------- */
+
+export type SalesReportData = DaySalesData | ProductSalesData;
+
+export type SalesReportStats =
+  | DaySalesStatData
+  | ProductSalesStatData;
