@@ -29,8 +29,6 @@ export function SalesReportTable({
   onPageChange,
   onPageSizeChange,
 }: Props) {
-
-  console.log(reportType);
   
 
   const safeData = Array.isArray(data) ? data : [];

@@ -19,7 +19,6 @@ export const ReportApi = {
       PagedResponse<DaySalesData | ProductSalesData>
     >(base, { ...form, page, size });
 
-    console.log(res.data);
     return res.data;
   },
   
@@ -32,8 +31,7 @@ export const ReportApi = {
     const res = await ApiClient.post<
     DaySalesStatData | ProductSalesStatData
     >(base, form);
-    
-    console.log(res.data);
+  
     return res.data;
   },
 };

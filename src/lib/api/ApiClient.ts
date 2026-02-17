@@ -17,7 +17,7 @@ ApiClient.interceptors.response.use(
     const apiError = ErrorParser(error)
     const message = ErrorFormatter(apiError);
     toast.error(message);
-    console.error(error.response?.data);
+    // console.error(error.response?.data);
     return Promise.reject(error);
   }
 );
@@ -33,7 +33,7 @@ MultipartApiClient.interceptors.response.use(
     const apiError = ErrorParser(error)
     const message = ErrorFormatter(apiError);
     toast.error(message);
-    console.error(error.response?.data || error.message);
+    // console.error(error.response?.data || error.message);
     return Promise.reject(error);
   }
 );

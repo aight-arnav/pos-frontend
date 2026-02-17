@@ -10,8 +10,6 @@ interface Props {
 
 export function SalesReportStats({ stats }: Props) {
   if (!stats) return null;
-
-  console.log(stats);
   
 
   const isDayReport = "totalDays" in stats;
