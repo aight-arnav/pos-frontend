@@ -51,7 +51,7 @@ export function InventoryUploadDialog({ uploadTsv }: Props) {
             Upload Inventory
           </DialogTitle>
           <DialogDescription>
-            Upload a TSV file to bulk update inventory quantities.
+            Upload a TSV file to bulk update inventory quantities. New inventory is always added to existing stock.
           </DialogDescription>
         </DialogHeader>
 
